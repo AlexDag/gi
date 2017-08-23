@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <title>Welcome to OpenShift</title>
+  <title>Bienvenido a Gestión Integración</title>
 
 <style>
 
@@ -208,7 +208,7 @@ line-height: 1.4;
 
 <section class='container'>
           <hgroup>
-            <h1>Welcome to your PHP application on OpenShift</h1>
+            <h1>Bienvenido a Gestión Integración, servicios de Salud</h1>
           </hgroup>
 
 
