@@ -208,7 +208,7 @@ line-height: 1.4;
 
 <section class='container'>
           <hgroup>
-            <h1>Bienvenido a Gestión Integración, servicios de Salud</h1>
+            <h1>Bienvenido a Gestión Integración, Servicios de Salud</h1>
           </hgroup>
 
 
