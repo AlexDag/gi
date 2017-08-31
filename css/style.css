@@ -998,7 +998,7 @@ tr.tablesorter-filter-row input.disabled {
 
 
 .tablesorter .tablesorter-filter-row td:nth-child(19n+1) .tablesorter-filter {
-    width: 50px;
+    width: 40px;
 }
 .tablesorter .tablesorter-filter-row td:nth-child(19n+2) .tablesorter-filter {
     width: 50px;
@@ -1006,10 +1006,11 @@ tr.tablesorter-filter-row input.disabled {
 .tablesorter .tablesorter-filter-row td:nth-child(19n+3) .tablesorter-filter {
     width: 50px;
 }
-
-
 .tablesorter .tablesorter-filter-row td:nth-child(19n+4) .tablesorter-filter {
     width: 100px;
+}
+.tablesorter .tablesorter-filter-row td:nth-child(19n+19) .tablesorter-filter {
+    width: 60px;
 }
 
 .transbox60 {

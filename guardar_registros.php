@@ -32,9 +32,9 @@ include ("common.php");
 			 $cantidad = $res[16];
 			 $provincia = $res[17];
 			 $dependencia = $res[18];
-			 $registers = $registers.$res[0].'|'.$res[1].'|'.$res[2].'|'.$res[3].'|'.$res[4].'|'.$res[5].'|'.$res[6]
-				 .$res[7].'|'.$res[8].'|'.$res[9].'|'.$res[10].'|'.$res[11].'|'.$res[12].'|'.$res[13]
-				 .$res[14].'|'.$res[15].'|'.$res[16].'|'.$res[17].'|'.$res[18];
+			 $registers = $registers.$res[0].'|'.$res[1].'|'.$res[2].'|'.$res[3].'|'.$res[4].'|'.$res[5].'|'.$res[6].'|'
+				 .$res[7].'|'.$res[8].'|'.$res[9].'|'.$res[10].'|'.$res[11].'|'.$res[12].'|'.$res[13].'|'
+				 .$res[14].'|'.$res[15].'|'.$res[16].'|'.$res[17].'|'.$res[18]."\n";
 
 			 $sql = "insert into registros_descapacitados VALUE (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,NOW())";
 			 $smt = $pdo->prepare($sql);
@@ -52,7 +52,7 @@ include ("common.php");
 		 fwrite($handle, $registers);
 		 fclose($handle);
 
-		 header('HTTP/1.1 200');
+
 		 header('Content-Type: application/json; charset=UTF-8');
 		 die(json_encode(array('message' => $ffile)));
 

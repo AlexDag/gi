@@ -5,6 +5,8 @@ include("common.php");
 $option_tipo_archivo	= add_options(get_tipo_archivo($pdo));
 $option_provincias	= add_options(get_provincias($pdo));
 $option_obras_sociales	= add_options(get_obras_sociales($pdo));
+$option_dependencias	= add_options(get_dependencias($pdo));
+
 
 
 
@@ -91,9 +93,7 @@ $(window).load(function() {
                 $table
                     .trigger('update');
 
-
                 window.location.href = 'download_registro.php?p=' + data.message;
-               // alert('Se inserateron ');
             }
 
             function onError(data, status)
@@ -142,8 +142,9 @@ $(window).load(function() {
                 var tipo_archivo = $('#tipo_archivo option:selected').val();
                 var provincia = $('#provincia option:selected').val();
                 var obras_sociales =$('#obras_sociales option:selected').val();
+                var dependencia = $('#dependencia option:selected').val();
 
-                if(tipo_archivo=='n/c'  || provincia=='n/c' || obras_sociales=='n/c'){
+                if(tipo_archivo=='n/c'  || provincia=='n/c' || obras_sociales=='n/c' || dependencia=='n/c'){
 
                      alert('Todos los campos obligatorios tienen que tener valores !');  return false;
                 }
@@ -156,7 +157,7 @@ $(window).load(function() {
 					 row += '<tr>'+
                             '<td tipo>'+tipo_archivo+'</td>'+
                             '<td obras>'+obras_sociales+'</td>' +
-                            '<td cuil>20-11111111-0</td>'+ /*cuil*/
+                            '<td cuil></td>'+ /*cuil*/
                             '<td certificado contenteditable="true"></td>'+/*codigo certificado*/
                             '<td vencimiento contenteditable="true"></td>'+/*vencimiento certificado*/
                             '<td contenteditable="true"></td>'+/*periodo prestacion*/
@@ -166,13 +167,13 @@ $(window).load(function() {
                             '<td contenteditable="true"></td>'+/*fecha de emision */
                             '<td contenteditable="true"></td>'+/*numero CAE o CAI*/
                             '<td contenteditable="true"></td>'+/*punto de venta*/
-							'<td>12345677</td>'+ /*numero comprobante*/
+							'<td></td>'+ /*numero comprobante*/
                             '<td contenteditable="true"></td>'+/*importe de comprobante*/
                             '<td contenteditable="true"></td>'+/*importe solicitado*/
-                            '<td>123</td>'+/*codigo de practica*/
+                            '<td></td>'+/*codigo de practica*/
                             '<td contenteditable="true"></td>'+/*cantidad*/
                             '<td>'+provincia+'</td>'+
-                            '<td contenteditable="true"></td>'+/*dependencia*/
+                            '<td>'+dependencia+'</td>'+/*dependencia*/
                             '</tr>',
 						 $row = $(row),
 						resort = true;
@@ -220,10 +221,10 @@ $(window).load(function() {
 		.tablesorter({
 			theme: 'blue',
 			headers: {
-				0: {resizable: true, filter: false, sorter: false},
+				0: {resizable: true, true: false, sorter: true},
 				1: {resizable: true, filter: false, sorter: false},
 				2: {resizable: true, filter: false, sorter: false},
-				3: {resizable: true, filter: false, sorter: false},
+				3: {resizable: true, filter: true, sorter: true},
 				4: {resizable: true, filter: false, sorter: false},
 				5: {resizable: true, filter: false, sorter: false},
 				6: {resizable: true, filter: false, sorter: false},
@@ -233,13 +234,13 @@ $(window).load(function() {
 				10: {resizable: true, filter: false, sorter: false},
 				11: {resizable: true, filter: false, sorter: false},
 				12: {resizable: true, filter: false, sorter: false},
-				13: {resizable: true, filter: false, sorter: false}, // image
-				14: {resizable: true, filter: false, sorter: false}, // video
+				13: {resizable: true, filter: false, sorter: false},
+				14: {resizable: true, filter: false, sorter: false},
 				15: {resizable: true, filter: false, sorter: false},
 				16: {resizable: true, filter: false, sorter: false},
 				17: {resizable: true, filter: false, sorter: false},
-				18: {resizable: true, filter: false, sorter: false},
-				19: {resizable: true, filter: false, sorter: false}
+				18: {resizable: true, filter: true, sorter: true}
+
 			},
 			widgets: ['zebra', 'columns','editable','filter'],
 			widgetOptions: {
@@ -288,25 +289,42 @@ $(window).load(function() {
 			<?
 				$listado .= "";
 		   ?>
+        <div class="pager" style="padding-left: 20px; padding-top: -20px; margin: 0px; " >
+            <div class="ui-grid-b">
+                <div class="ui-block-a" style="width:50%;">
 
+                            <span class="pagedisplay"></span>
+                            <button id="clean" data-theme="b" type="button" href="" data-mini="false" data-inline="true" >Borrar</button>
+                            <button id="save" data-theme="b" type="button" href="" data-mini="false" data-inline="true" >Guardar</button>
+                            <button id="createLine" data-theme="b" type="button" href="home.html" data-mini="false" data-inline="true" >Crear Lineas</button>
 
-        <div class="pager" style="padding-left: 20px; padding-top: 20px;">
-            <span class="pagedisplay"></span>
-            <button id="clean" data-theme="b" type="button" href="home.html" data-mini="false" data-inline="true" >Borrar</button>
-            <button id="save" data-theme="b" type="button" href="home.html" data-mini="false" data-inline="true" >Guardar</button>
+                </div>
+                <div class="ui-block-b" style="width:10%;">
+
+                        <label for="textinput1" id="margen_icono">
+                            Cantidad registros
+                        </label>
+                        <input align="left" type="text" name="cantidadReg" id="cantidadReg" data-mini="false" data-inline="true" value="" style="width: 100px;"	 data-theme="a"/>
+
+                </div>
+                <div class="ui-block-c" style="width:40%;">
+
+                </div>
+            </div>
         </div>
+
 		<!--div align="right">
              <button id="clean" data-theme="b" type="button" href="home.html" data-mini="false" data-inline="true" >Borrar</button>
              <button id="save" data-theme="b" type="button" href="home.html" data-mini="false" data-inline="true" >Guardar</button>
         </div-->
-		<div class="ui-grid-c ui-responsive">
-			<div class="ui-block-a" style="width: 25%">
+		<div class="ui-grid-c ui-responsive" style="margin: 0px; padding: 0px;">
+			<div class="ui-block-a" style="width: 25%;">
 				<div data-role="fieldcontain">
-					<fieldset data-role="controlgroup" data-mini="true">
-						<label for="textinput1" id="margen_icono">
+					<fieldset data-role="controlgroup" data-mini="true" style=" margin-right: 0px; padding-top: 0px;">
+						<label for="textinput1" id="margen_icono" >
 							Tipo de archivo
 						</label>
-						<select name="tipo_archivo" id="tipo_archivo">
+						<select name="tipo_archivo" id="tipo_archivo" >
 							<option value="n/c">select</option>
 							<? echo $option_tipo_archivo; ?>
 						</select>
@@ -325,11 +343,11 @@ $(window).load(function() {
 					</fieldset>
 				</div>
 			</div>
-			<div class="ui-block-b" style="width: 30%">
+			<div class="ui-block-b" style="width: 25%">
 				<div data-role="fieldcontain">
 					<fieldset data-role="controlgroup" data-mini="true">
 						<label for="textinput1" id="margen_icono">
-							Código ObraSocial
+							Código de ObraSocial
 						</label>
 						<select name="obras_sociales" id="obras_sociales">
 							<option value="n/c">select</option>
@@ -350,7 +368,7 @@ $(window).load(function() {
 					</fieldset>
 				</div>
 			</div>
-			<div class="ui-block-c" style="width: 30%">
+			<div class="ui-block-c" style="width: 25%">
 				<div data-role="fieldcontain">
 					<fieldset data-role="controlgroup" data-mini="true">
 						<label for="textinput1" id="margen_icono">
@@ -375,20 +393,22 @@ $(window).load(function() {
 					</fieldset>
 				</div>
 			</div>
-			<div class="ui-block-d" style="width: 10%">
-				<div data-role="fieldcontain">
-					<fieldset data-role="controlgroup" data-mini="true">
-						<label for="textinput1" id="margen_icono">
-							Cant.registros
-						</label>
-						<input align="left" type="text" name="cantidadReg" id="cantidadReg" value="" style="width: 100px;"	 data-theme="a"/>
-					</fieldset>
-				</div>
+			<div class="ui-block-d" style="width: 25%">
+                <div data-role="fieldcontain">
+                    <fieldset data-role="controlgroup" data-mini="true">
+                        <label for="textinput1" id="margen_icono">
+                            Dependencia
+                        </label>
+                        <select name="dependencia" id="dependencia">
+                            <option value="n/c">select</option>
+                            <? echo $option_dependencias; ?>
+                        </select>
+                    </fieldset>
+                </div>
 
-				<div><button id="createLine" data-theme="b" type="button" href="home.html" data-mini="false" data-inline="true" >Crear Lineas</button></div>
 			</div>
 		</div>
-    <form name="myForm" id="registros" action="guardar-regiistros.php" method="post" enctype="multipart/form-data">
+    <form name="myForm" id="registros" action="" method="post" enctype="multipart/form-data">
 			<table class="tablesorter" style="width: 100%; float: left;">
 				<thead>
 						<tr>
@@ -400,7 +420,7 @@ $(window).load(function() {
 						  <th>Venc.cert</th>
 						  <th>Per.prest</th>
 						  <th>cuit.prest</th>
-						  <th>T.compob</th>
+						  <th>T.comprob</th>
 						  <th>T.emicion</th>
 						  <th>F.emicion</th>
 						  <th>Num.CAE</th>
@@ -411,7 +431,7 @@ $(window).load(function() {
 							<th>CodigoPrac</th>
 							<th>Cantid</th>
 							<th>Provincia</th>
-							<th>Dependen</th>
+							<th>Depend</th>
 						 
 						  
 						</tr>
@@ -426,7 +446,7 @@ $(window).load(function() {
 							<th>Venc.cert</th>
 							<th>Per.prest</th>
 							<th>cuit.prest</th>
-							<th>T.compob</th>
+							<th>T.comprob</th>
 							<th>T.emicion</th>
 							<th>F.emicion</th>
 							<th>Num.CAE</th>
@@ -437,8 +457,7 @@ $(window).load(function() {
 							<th>CodigoPrac</th>
 							<th>Cantid</th>
 							<th>Provincia</th>
-							<th>Dependen</th>
-
+							<th>Depend</th>
 						</tr>
 
 			<td colspan="19">

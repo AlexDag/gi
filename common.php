@@ -87,6 +87,21 @@ function get_obras_sociales($pdo)
     return $ret;
 }
 
+function get_dependencias($pdo)
+{
+$sql = "SELECT codigo,valor FROM dependencias ORDER BY valor ASC";
+    $query = $pdo->prepare($sql);
+    $pdo->beginTransaction();
+    $query->execute();
+    $pdo->commit();
+    $ret='';
+    while($row = $query->fetch()) {
+        $id =  ( $row[codigo] );
+        $ret[$id] = ( $row[valor]);
+    }
+    return $ret;
+}
+
 function is_user($pdo,$username)
 {
     $sql = "SELECT username FROM users where username = ?";
