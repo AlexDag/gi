@@ -14,7 +14,13 @@ function is_user($pdo,$username)
     }
     return false;
 }
+
+file_put_contents("download.log",print_r($_GET,true));
+
 if(isset($_GET["p"])  ){
+
+
+
 
     define('DB_HOST', getenv('OPENSHIFT_MYSQL_DB_HOST'));
     define('DB_PORT',getenv('OPENSHIFT_MYSQL_DB_PORT'));
@@ -31,25 +37,56 @@ if(isset($_GET["p"])  ){
     }
 
 
+
     if (is_user($pdo,$_SESSION['usuario'])) {
-        $file = urldecode($_GET["p"]); // Decode URL-encoded string
+        try {
+        $user = $_SESSION['usuario'];
+        //$files = urldecode($_GET["p"]); // Decode URL-encoded string
 
 
-        $filepath = 'files/' . $file;
+        $files = explode(',',urldecode($_GET["p"]));
 
-        // Process download
-        if (file_exists($filepath)) {
-            header('Content-Description: File Transfer');
-            header('Content-Type: application/octet-stream');
-            header('Content-Disposition: attachment; filename="' . basename($filepath) . '"');
-            header('Expires: 0');
-            header('Cache-Control: must-revalidate');
-            header('Pragma: public');
-            header('Content-Length: ' . filesize($filepath));
-            flush(); // Flush system output buffer
-            readfile($filepath);
-            exit;
+        $filepath = array();
+        foreach( $files as $value){
+           // array_push ( $filepath , 'zfiles/'.$user.'/' . $value.'_ds.txt' );
+            array_push ( $filepath ,  $value.'_ds.txt' );
         }
+
+
+
+       $fecha = new DateTime();
+
+      //  $zipname = 'zfiles/'.$user.'/gestion_integracion_'.$fecha->getTimestamp().'.zip';
+
+            chdir('zfiles/'.$user);
+            $zipname = 'gestion_integracion.zip';
+            $zip = new ZipArchive;
+
+
+        $zip->open($zipname, ZipArchive::CREATE);
+        foreach ($filepath as $file) {
+            $zip->addFile($file);
+        }
+        $zip->close();
+
+        } catch(PDOException $e) {
+            echo 'ERROR_pdo: ' . $e->getMessage();
+            file_put_contents("error.log",print_r($e->getMessage(),true));
+        }
+        header('Content-Description: File Transfer');
+       // header('Content-Type: application/octet-stream');
+        header('Content-Type: application/zip');
+        header('Content-Disposition: attachment; filename="' . basename($zipname) . '"');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate');
+        header('Pragma: public');
+        header('Content-Length: ' . filesize($zipname));
+        flush(); // Flush system output buffer
+        readfile($zipname);
+
+
+        exit;
+
     }
 }
 ?>

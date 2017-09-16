@@ -19,6 +19,8 @@ function add_options()
         if (!is_array($valueToBeSelected)){
 		$valueToBeSelected = array($valueToBeSelected);
 		}
+
+
         foreach ( $theArray as $key => $value )
         {
             if($valueToBeSelected != "" && in_array($key,$valueToBeSelected))
@@ -29,7 +31,9 @@ function add_options()
             {
                 $options .= "<option value = \"$key\">$value</option>";                
             }
-        }   
+        }
+
+
         return $options;            
     }
     else
@@ -87,6 +91,22 @@ function get_obras_sociales($pdo)
     return $ret;
 }
 
+function get_practicas($pdo)
+{
+    $sql = "SELECT codigo,practica FROM practicas ORDER BY practica ASC";
+    $query = $pdo->prepare($sql);
+    $pdo->beginTransaction();
+    $query->execute();
+    $pdo->commit();
+    $ret='';
+    while($row = $query->fetch()) {
+        $id =  ( $row[codigo] );
+        $ret[$id] = ( $row[practica]);
+    }
+    return $ret;
+}
+
+
 function get_dependencias($pdo)
 {
 $sql = "SELECT codigo,valor FROM dependencias ORDER BY valor ASC";
@@ -132,6 +152,43 @@ function get_user2($pdo,$username)
         return $username==  $row['username'];
     }
     return false;
+}
+function in_array_r($needle, $haystack) {
+    foreach ($haystack as $key => $value){
+
+       if ($needle==$key)
+           return true;
+    }
+    return false;
+}
+
+function sanitizion($str){
+    file_put_contents("asanitis.log",print_r($str,true));
+    $str = str_replace("?","",$str);
+    $str = str_replace(".","",$str);
+    $str = str_replace("..","",$str);
+    $str = str_replace("'","",$str);
+    $str = str_replace('"','',$str);
+    $str = str_replace("(","",$str);
+    $str = str_replace(")","",$str);
+    $str = str_replace("?","",$str);
+    $str = str_replace("{","",$str);
+    $str = str_replace("}","",$str);
+    $str = str_replace("[","",$str);
+    $str = str_replace("]","",$str);
+    $str = str_replace("*","",$str);
+    $str = str_replace("!","",$str);
+    $str = str_replace("%","",$str);
+    $str = str_replace("/","",$str);
+    $str = str_replace("\\","",$str);
+    $str = str_replace("|","",$str);
+    $str = str_replace("!","",$str);
+    $str=preg_replace('/\s+/', '', $str);
+
+
+    file_put_contents("asanitisdone.log",print_r($str,true));
+
+    return $str;
 }
 
 ?>

@@ -6,7 +6,7 @@ $option_tipo_archivo	= add_options(get_tipo_archivo($pdo));
 $option_provincias	= add_options(get_provincias($pdo));
 $option_obras_sociales	= add_options(get_obras_sociales($pdo));
 $option_dependencias	= add_options(get_dependencias($pdo));
-
+$option_practicas	= add_options(get_practicas($pdo));
 
 
 
@@ -40,6 +40,8 @@ $option_dependencias	= add_options(get_dependencias($pdo));
 
 		<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
 		<script src="http://code.jquery.com/mobile/1.3.1/jquery.mobile-1.3.1.min.js"></script>
+		<script src="js/common.js"></script>
+
        	       <script>
 
 $(window).load(function() {
@@ -84,6 +86,20 @@ $(window).load(function() {
 	<script src="pager/js/pager-custom-controls.js"></script>
 
 	<script id="js">$(function(){
+           
+
+			$(document).on('change', '.targetSelected', function(e) {
+				//console.log(this.options[e.target.selectedIndex].text);
+				//console.log(e.target.id);  // field name
+				//console.log(e.target.parentElement.parentElement.id); // id producto
+				//console.log('select value:'+this.options[e.target.selectedIndex].value);
+				//$("#select_id").val("val2").change();
+				//e.target.setAttribute('val',this.options[e.target.selectedIndex].value);
+
+			});
+
+
+
             function onSuccess(data, status)
             {
 
@@ -93,26 +109,36 @@ $(window).load(function() {
                 $table
                     .trigger('update');
 
-                window.location.href = 'download_registro.php?p=' + data.message;
-            }
+				window.location.href = 'download_registro.php?p=' + data.message;
+
+		    };
 
             function onError(data, status)
             {
                 alert('error:'+data.statusText);
-            }
+            };
 
 
             $("#save").click(function(){
 
                var data=[];
-
+                var register =  makeidAlfaNumber(20);
                 $('tbody').find('tr').each(function(){
                      var count = this.childElementCount;
                      var indexed_array = {};
+
                      for(var i=0;i<count;i++){
-                         indexed_array[i] =   this.children[i].textContent;
+						 if(i==8){
+							 //tipo emicion
+							 indexed_array[i] = $(this).find("select").val()
+						 }else{
+							 indexed_array[i] =   this.children[i].textContent;
+						 }
                      }
-                     data.push(indexed_array);
+
+                    indexed_array[count] = register;
+                    data.push(indexed_array);
+
 
                 });
                 $.ajax({
@@ -143,6 +169,7 @@ $(window).load(function() {
                 var provincia = $('#provincia option:selected').val();
                 var obras_sociales =$('#obras_sociales option:selected').val();
                 var dependencia = $('#dependencia option:selected').val();
+                var practicas = $('#practicas option:selected').val();
 
                 if(tipo_archivo=='n/c'  || provincia=='n/c' || obras_sociales=='n/c' || dependencia=='n/c'){
 
@@ -153,8 +180,11 @@ $(window).load(function() {
                 var row='';
 				for(var i=0;i<countInt;i++){
 
-
-					 row += '<tr>'+
+                    var option_tipoemision	= '<option selected value="E">E</option><option value="E">E</option><option  value="I">I</option>    ';
+//					var option_estados =  option_estados.replace('"', '\"');
+//'<td>'+getSelectMainPart('estado',row.estado)+option_estados + '</select></td>';
+		            var tipoopsiontd = 			'<td>'+getSelectMainPart('tipoemision')+option_tipoemision + '</select></td>';
+					    row += '<tr>'+
                             '<td tipo>'+tipo_archivo+'</td>'+
                             '<td obras>'+obras_sociales+'</td>' +
                             '<td cuil></td>'+ /*cuil*/
@@ -163,14 +193,15 @@ $(window).load(function() {
                             '<td contenteditable="true"></td>'+/*periodo prestacion*/
 							'<td contenteditable="true"></td>'+/*CUIT prestador*/
                             '<td contenteditable="true"></td>'+/*tipo de comprobante*/
-                            '<td contenteditable="true"></td>'+/*tipo emision*/
+						 tipoopsiontd+
+                            //'<td contenteditable="true"></td>'+/*tipo emision*/
                             '<td contenteditable="true"></td>'+/*fecha de emision */
                             '<td contenteditable="true"></td>'+/*numero CAE o CAI*/
                             '<td contenteditable="true"></td>'+/*punto de venta*/
 							'<td></td>'+ /*numero comprobante*/
                             '<td contenteditable="true"></td>'+/*importe de comprobante*/
                             '<td contenteditable="true"></td>'+/*importe solicitado*/
-                            '<td></td>'+/*codigo de practica*/
+                            '<td>'+practicas+'</td>'+/*codigo de practica*/
                             '<td contenteditable="true"></td>'+/*cantidad*/
                             '<td>'+provincia+'</td>'+
                             '<td>'+dependencia+'</td>'+/*dependencia*/
@@ -275,7 +306,21 @@ $(window).load(function() {
 			container: $pager,
 			size: 10,
 			output: 'showing: {startRow} to {endRow} ({totalRows})'
+		})
+
+        .children('tbody').on('editComplete', 'td', function(event, config) {
+			var $this = $(this),
+				newContent = $this.text(),
+				cellIndex = this.cellIndex, // there shouldn't be any colspans in the tbody
+				rowIndex = $this.closest('tr').attr('id'); // data-row-index stored in row id
+			//alert('new value:'+newContent);
+			if(newContent!=='') {
+				//alert('  new value:' + newContent);
+			}
+			// Do whatever you want here to indicate
+			// that the content was updated
 		});
+
 
 });
 </script>
@@ -318,7 +363,7 @@ $(window).load(function() {
              <button id="save" data-theme="b" type="button" href="home.html" data-mini="false" data-inline="true" >Guardar</button>
         </div-->
 		<div class="ui-grid-c ui-responsive" style="margin: 0px; padding: 0px;">
-			<div class="ui-block-a" style="width: 25%;">
+			<div class="ui-block-a" style="width: 20%;">
 				<div data-role="fieldcontain">
 					<fieldset data-role="controlgroup" data-mini="true" style=" margin-right: 0px; padding-top: 0px;">
 						<label for="textinput1" id="margen_icono" >
@@ -343,7 +388,7 @@ $(window).load(function() {
 					</fieldset>
 				</div>
 			</div>
-			<div class="ui-block-b" style="width: 25%">
+			<div class="ui-block-b" style="width: 40%">
 				<div data-role="fieldcontain">
 					<fieldset data-role="controlgroup" data-mini="true">
 						<label for="textinput1" id="margen_icono">
@@ -361,14 +406,14 @@ $(window).load(function() {
 						<label for="textinput1" id="margen_icono">
 							Código de Practica
 						</label>
-						<select name="codigo_practica">
-							<option value="n/c"><? echo $lang_seleccionar ?></option>
-							<? echo $option_prefijos; ?>
+						<select name="practicas" class="selectPractica" id="practicas">
+							<option value="n/c">SELECT</option>
+							<? echo $option_practicas; ?>
 						</select>
 					</fieldset>
 				</div>
 			</div>
-			<div class="ui-block-c" style="width: 25%">
+			<div class="ui-block-c" style="width: 20%">
 				<div data-role="fieldcontain">
 					<fieldset data-role="controlgroup" data-mini="true">
 						<label for="textinput1" id="margen_icono">
@@ -393,7 +438,7 @@ $(window).load(function() {
 					</fieldset>
 				</div>
 			</div>
-			<div class="ui-block-d" style="width: 25%">
+			<div class="ui-block-d" style="width: 20%">
                 <div data-role="fieldcontain">
                     <fieldset data-role="controlgroup" data-mini="true">
                         <label for="textinput1" id="margen_icono">

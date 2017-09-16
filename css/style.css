@@ -1164,5 +1164,7 @@ p.nombre_producto {
     padding: 10px;
     text-align: center;
 }
-
+.selectPractica {
+    font-size: 9px !important;
+}
 
