@@ -2,7 +2,8 @@
 
 
 include_once ("conexion.php");
-require ("lib/password.php")
+require ("lib/password.php");
+include_once("common.php");
 ?>
 
 <!DOCTYPE html>
@@ -32,42 +33,55 @@ require ("lib/password.php")
         <div data-role="page" id="page1">
                  <?php
 
+                 if($_SESSION['usuario'] ==null){
 
-                 $usuario=$_POST['usuario'];
-				 $clave=$_POST['clave'];
+                     $usuario=$_POST['usuario'];
+                     $clave=$_POST['clave'];
 
-                 $query = $pdo->prepare("SELECT   psswd  from users  WHERE  username = ? ");
-                 $pdo->beginTransaction();
-                 $query->execute(array($usuario));
-                 $pdo->commit();
+                     $query = $pdo->prepare("SELECT   psswd  from users  WHERE  username = ? ");
+                     $pdo->beginTransaction();
+                     $query->execute(array($usuario));
+                     $pdo->commit();
 
-                 if($query) {
+                     if($query) {
 
-                     $row = $query->fetch(PDO::FETCH_ASSOC);
-                     $ppss = $row['psswd'];
+                         $row = $query->fetch(PDO::FETCH_ASSOC);
+                         $ppss = $row['psswd'];
 
-                 
 
-                        // password failed
-                     if( !password_verify($clave, $ppss)){
-                         echo "<p>  Error al identificar el usuario </p>";
-                         return;
+                         // password failed
+                         if (!password_verify($clave, $ppss)) {
+                             echo "<p>  Error al identificar el usuario </p>";
+                             session_destroy();
+                             header('Location: index.php?nocache='.time(), true, 302);
+                             exit;
+                         }
+
+
+                         $_SESSION['usuario'] = $usuario;
+
+                         include "header.php";
+                         include "menu_principal.php";
+
                      }
+                        else{
+
+                            echo "<p>  Error al identificar el usuario </p>";
+                            session_destroy();
+                            header('Location: index.php?nocache='.time(), true, 302);
+                            exit;
+
+                            ?>
+                            <script>  </script>
+                            <?
 
 
+                        }
+                 }else {
 
-					$_SESSION['usuario'] = $usuario;
-
-					include "header.php";
-					include "menu_principal.php";
-
-						
-				}
-				else{
-
-                    echo "<p>  Error al identificar el usuario </p>";
-					 
-				}
+                     include "header.php";
+                     include "menu_principal.php";
+                 }
 				  ?>
 				
 
