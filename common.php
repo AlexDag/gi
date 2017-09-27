@@ -163,7 +163,7 @@ function in_array_r($needle, $haystack) {
 }
 
 function sanitizion($str){
-    file_put_contents("asanitis.log",print_r($str,true));
+
     $str = str_replace("?","",$str);
     $str = str_replace(".","",$str);
     $str = str_replace("..","",$str);
@@ -186,7 +186,7 @@ function sanitizion($str){
     $str=preg_replace('/\s+/', '', $str);
 
 
-    file_put_contents("asanitisdone.log",print_r($str,true));
+
 
     return $str;
 }

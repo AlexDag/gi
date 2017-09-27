@@ -1,12 +1,5 @@
 <?php @session_start();
 include ("conexion.php");
-include("common.php");
-
-$option_tipo_archivo	= add_options(get_tipo_archivo($pdo));
-$option_provincias	= add_options(get_provincias($pdo));
-$option_obras_sociales	= add_options(get_obras_sociales($pdo));
-$option_dependencias	= add_options(get_dependencias($pdo));
-$option_practicas	= add_options(get_practicas($pdo));
 
 
 ?>
@@ -20,8 +13,18 @@ $option_practicas	= add_options(get_practicas($pdo));
 
     </title>
 
-
-
+    <style>
+        #dvLoading
+        {
+            position: fixed;
+            left: 0px;
+            top: 0px;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            background: url('imagenes/page-loader.gif') 50% 50% no-repeat rgb(249,249,249);
+        }
+    </style>
     <link rel="stylesheet" href="css/style.css" />
 
     <link rel="stylesheet" href="css/tabla.css" />
@@ -29,24 +32,101 @@ $option_practicas	= add_options(get_practicas($pdo));
 
     <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
     <script src="http://code.jquery.com/mobile/1.3.1/jquery.mobile-1.3.1.min.js"></script>
+
+
     <script src="js/common.js"></script>
+
+
+    <script src="datepicker/ui/jquery.ui.core.js"></script>
+    <script src="datepicker/ui/jquery.ui.widget.js"></script>
+    <script src="datepicker/ui/jquery.ui.datepicker.js"></script>
+
+
+    <link rel="stylesheet" href="datepicker/themes/base/jquery.ui.datepicker.css">
+    <link rel="stylesheet" href="datepicker/themes/base/jquery.ui.theme.css">
+
+
 
     <script>
 
+        $(window).load(function() {
+            $("#dvLoading").fadeOut("slow");
+        })
+        5	</script>
+    <!-- Demo stuff -->
+    <link rel="stylesheet" href="pager/docs/css/jq.css">
+    <link href="pager/docs/css/prettify.css" rel="stylesheet">
+    <script src="pager/docs/js/prettify.js"></script>
+    <script src="pager/docs/js/docs.js"></script>
+
+    <!-- Tablesorter: required -->
+    <link rel="stylesheet" href="pager/css/theme.blue.css">
+    <script src="pager/js/jquery.tablesorter.js"></script>
+    <script src="pager/js/parsers/parser-input-select.js"></script>
+    <script src="pager/js/jquery.tablesorter.widgets.js"></script>
+    <script src="pager/js/widgets/widget-editable.js"></script>
 
 
-
-
+    <!-- Tablesorter: optional -->
+    <link rel="stylesheet" href="pager/addons/pager/jquery.tablesorter.pager.css">
+    <style>
+        .left { float: left; }
+        .right {
+            float: right;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -khtml-user-select: none;
+            -ms-user-select: none;
+        }
+        .pager .prev, .pager .next, .pagecount { cursor: pointer; }
+        .pager a {
+            text-decoration: none;
+            color: black;
+        }
+        .pager a.current {
+            color: #0080ff;
+        }
+    </style>
+    <script src="pager/addons/pager/jquery.tablesorter.pager.js"></script>
+    <script src="pager/js/pager-custom-controls.js"></script>
 
     <script id="js">$(function(){
-            $( document ).ready(function() {
+
+            $( ".datepicker" ).datepicker({
+                changeMonth: true,
+                changeYear: true,
+                dateFormat: 'dd-mm-yy',
+                yearRange: '2010:2017'
             });
+            $('.datepicker').datepicker()
+                .on("input change", function (e) {
+                    console.log("Date changed: ", e.target.value);
+                    // founded_regisdters
+                    $.ajax({
+                        type: "POST",
+                        url: "load_registrosByDate.php",
+                        cache: false,
+                        data: {datos:e.target.value},
+                        success: onSuccessGetRegistersByDate,
+                        error: onError
+                    });
 
-            $( window ).load(function() {
-          });
 
 
+                });
+            $(document).on("keydown", function(e) {
+                console.log(e.type, e.target);
+                //alert(e.type+' ... '+ e.target);
+                //e.keyCode==9  tab
+                //e.currentTarget.activeElement.attributes[1].firstChild ==
 
+                //  td.focus();
+            })
+
+            $(document).ready(function()
+            {
+
+            });
 
             $(document).on('change', '.targetSelected', function(e) {
                 //console.log(this.options[e.target.selectedIndex].text);
@@ -58,51 +138,114 @@ $option_practicas	= add_options(get_practicas($pdo));
 
             });
 
+            $('.register_founded').on('click', 'li', function () {
+                // call to get registers
+                //console.log(this);
+                //this.attributes.reg.value
+                $.ajax({
+                    type: "POST",
+                    url: "load_registrosByValue.php",
+                    cache: false,
+                    data: {datos:this.attributes.reg.value},
+                    success: onSuccessGetRegistersById,
+                    error: onError
+                });
+            });
+            function onSuccessGetRegistersById(data, status)
+            { //add row to table....
 
 
-            function onSuccess(data, status)
-            {
+                var $table = $('table');
 
+                $.tablesorter.clearTableBody( $table[0] );
+                $table
+                    .trigger('update');
 
-            }
+                var row='';
+                for (var i=0;i<data.data.length;i++){
+
+                    row += '<tr>'+
+                        '<td tipo>'+data.data[i].tipo_archivo+'</td>'+
+                        '<td obras>'+data.data[i].obras_socilales+'</td>' +
+                        '<td cuil>'+data.data[i].cuil+'</td>'+ /*cuil*/
+                        '<td certificado tabindex="1">'+data.data[i].codigo_certificado+'</td>'+/*codigo certificado*/
+                        '<td vencimiento tabindex="2" >'+data.data[i].vencim_certificado+'</td>'+/*vencimiento certificado*/
+                        '<td tabindex="3">'+data.data[i].periodo_prestacion+'</td>'+/*periodo prestacion*/
+                        '<td tabindex="4" >'+data.data[i].cuit_prestador+'</td>'+/*CUIT prestador*/
+                        '<td tabindex="5" >'+data.data[i].tipo_comprobante+'</td>'+/*tipo de comprobante*/
+                        '<td tabindex="5" >'+data.data[i].tipo_emision+'</td>'+/*tipo emision*/
+                        '<td tabindex="7" >'+data.data[i].fecha_emision+'</td>'+/*fecha de emision */
+                        '<td tabindex="8" '+data.data[i].nro_cae+'</td>'+/*numero CAE o CAI*/
+                        '<td tabindex="9" >'+data.data[i].punto_venta+'</td>'+/*punto de venta*/
+                        '<td tabindex="10">'+data.data[i].nro_comprobante+'</td>'+ /*numero comprobante*/
+                        '<td tabindex="11">'+data.data[i].importe_comprobante+'</td>'+/*importe de comprobante*/
+                        '<td tabindex="12">'+data.data[i].importe_solicitado+'</td>'+/*importe solicitado*/
+                        '<td tabindex="13">'+data.data[i].codigo_practica+'</td>'+/*codigo de practica*/
+                        '<td tabindex="14">'+data.data[i].cantidad+'</td>'+/*cantidad*/
+                        '<td>'+data.data[i].provincia+'</td>'+
+                        '<td>'+data.data[i].dependencia+'</td>'+/*dependencia*/
+                        '</tr>',
+                        $row = $(row),
+                        resort = true;
+                }
+                $('table')
+                    .find('tbody').append($row)
+                    .trigger('addRows', [$row, resort]);
+
+                $('table')
+                    .trigger('update');
+            };
+            function onSuccessGetRegistersByDate(data, status)
+            {    // add item to list
+                var lis = '';
+                for(var i= 0;i<data.data.length;i++){
+                    lis+="<li  reg="+data.data[i].registro_unico+"><a href=''>"+data.data[i].fecha_creacion+"</a></li>";
+                }
+
+                console.log('fecha:'+lis);
+                $('.register_founded').html(lis);
+            };
 
             function onError(data, status)
             {
                 alert('error:'+data.statusText);
-            }
+            };
 
 
             $("#save").click(function(){
-
+                // bajar los regitros a un archivo
                 var data=[];
-                var register =  makeidAlfaNumber(20);
-                $('tbody').find('tr').each(function(){
+
+                $('tbody.registros').find('tr').each(function(){
                     var count = this.childElementCount;
                     var indexed_array = {};
 
                     for(var i=0;i<count;i++){
-                        if(i==8){
-                            //tipo emicion
-                            indexed_array[i] = $(this).find("select").val()
-                        }else{
                             indexed_array[i] =   this.children[i].textContent;
-                        }
                     }
 
-                    indexed_array[count] = register;
                     data.push(indexed_array);
-                });
 
+
+                });
+                if(data.length===0){
+                    alert('NO hay registros para re-crear los archivos...');
+                    return false;
+                }
                 $.ajax({
                     type: "POST",
-                    url: "guardar_registros.php",
+                    url: "crear_archivos.php",
                     cache: false,
                     data: {datos:data},
-                    success: onSuccess,
+                    success: onSuccessCrearArchivos,
                     error: onError
                 });
-
             });
+            function onSuccessCrearArchivos(data, status)
+            {
+                window.location.href = 'download_registro.php?p=' + data.message;
+
+            };
 
             $("#clean").click(function() {
                 var $table = $('table');
@@ -112,65 +255,7 @@ $option_practicas	= add_options(get_practicas($pdo));
                     .trigger('update');
                 return false;
             });
-            $("#createLine").click(function() {
-                var cantidadReg = $("#cantidadReg").val();
 
-                var countInt = parseInt(cantidadReg);
-
-                var tipo_archivo = $('#tipo_archivo option:selected').val();
-                var provincia = $('#provincia option:selected').val();
-                var obras_sociales =$('#obras_sociales option:selected').val();
-                var dependencia = $('#dependencia option:selected').val();
-
-                if(tipo_archivo=='n/c'  || provincia=='n/c' || obras_sociales=='n/c' || dependencia=='n/c'){
-
-                    alert('Todos los campos obligatorios tienen que tener valores !');  return false;
-                }
-
-
-                var row='';
-                for(var i=0;i<countInt;i++){
-
-                    var option_tipoemision	= '<option selected value="E">E</option><option value="E">E</option><option  value="I">I</option>    ';
-//					var option_estados =  option_estados.replace('"', '\"');
-//'<td>'+getSelectMainPart('estado',row.estado)+option_estados + '</select></td>';
-                    var tipoopsiontd = 			'<td>'+getSelectMainPart('tipoemision')+option_tipoemision + '</select></td>';
-                    row += '<tr>'+
-                        '<td tipo>'+tipo_archivo+'</td>'+
-                        '<td obras>'+obras_sociales+'</td>' +
-                        '<td cuil></td>'+ /*cuil*/
-                        '<td certificado contenteditable="true"></td>'+/*codigo certificado*/
-                        '<td vencimiento contenteditable="true"></td>'+/*vencimiento certificado*/
-                        '<td contenteditable="true"></td>'+/*periodo prestacion*/
-                        '<td contenteditable="true"></td>'+/*CUIT prestador*/
-                        '<td contenteditable="true"></td>'+/*tipo de comprobante*/
-                        tipoopsiontd+
-                            //'<td contenteditable="true"></td>'+/*tipo emision*/
-                        '<td contenteditable="true"></td>'+/*fecha de emision */
-                        '<td contenteditable="true"></td>'+/*numero CAE o CAI*/
-                        '<td contenteditable="true"></td>'+/*punto de venta*/
-                        '<td></td>'+ /*numero comprobante*/
-                        '<td contenteditable="true"></td>'+/*importe de comprobante*/
-                        '<td contenteditable="true"></td>'+/*importe solicitado*/
-                        '<td></td>'+/*codigo de practica*/
-                        '<td contenteditable="true"></td>'+/*cantidad*/
-                        '<td>'+provincia+'</td>'+
-                        '<td>'+dependencia+'</td>'+/*dependencia*/
-                        '</tr>',
-                        $row = $(row),
-                        resort = true;
-
-                }
-                $('table')
-                    .find('tbody').append($row)
-                    .trigger('addRows', [$row, resort]);
-
-                $('table')
-                    .trigger('update');
-
-
-                return false;
-            });
 
 
             // initialize custom pager script BEFORE initializing tablesorter/tablesorter pager
@@ -203,9 +288,9 @@ $option_practicas	= add_options(get_practicas($pdo));
                 .tablesorter({
                     theme: 'blue',
                     headers: {
-                        0: {resizable: true, true: false, sorter: true},
-                        1: {resizable: true, filter: false, sorter: false},
-                        2: {resizable: true, filter: false, sorter: false},
+                        0: {resizable: true, filter: true, sorter: true},
+                        1: {resizable: true, filter: true, sorter: true},
+                        2: {resizable: true, filter: true, sorter: true},
                         3: {resizable: true, filter: true, sorter: true},
                         4: {resizable: true, filter: false, sorter: false},
                         5: {resizable: true, filter: false, sorter: false},
@@ -224,32 +309,18 @@ $option_practicas	= add_options(get_practicas($pdo));
                         18: {resizable: true, filter: true, sorter: true}
 
                     },
-                    widgets: ['zebra', 'columns','editable','filter'],
+                    widgets: ['zebra', 'columns','filter'],
                     widgetOptions: {
-                        editable_columns       : [4,5,6],       // or "0-2" (v2.14.2); point to the columns to make editable (zero-based index)
-                        editable_enterToAccept : true,          // press enter to accept content, or click outside if false
-                        editable_autoAccept    : true,          // accepts any changes made to the table cell automatically (v2.17.6)
+                        editable_columns       : [],       // or "0-2" (v2.14.2); point to the columns to make editable (zero-based index)
+                        editable_enterToAccept : false,          // press enter to accept content, or click outside if false
+                        editable_autoAccept    : false,          // accepts any changes made to the table cell automatically (v2.17.6)
                         editable_autoResort    : false,         // auto resort after the content has changed.
                         editable_validate      : null,          // return a valid string: function(text, original, columnIndex){ return text; }
-                        editable_focused       : function(txt, columnIndex, $element) {
-                            // $element is the div, not the td
-                            // to get the td, use $element.closest('td')
-                            $element.addClass('focused');
-                        },
-                        editable_blur          : function(txt, columnIndex, $element) {
-                            // $element is the div, not the td
-                            // to get the td, use $element.closest('td')
-                            $element.removeClass('focused');
-                        },
-                        editable_selectAll     : function(txt, columnIndex, $element){
-                            // note $element is the div inside of the table cell, so use $element.closest('td') to get the cell
-                            // only select everthing within the element when the content starts with the letter "B"
-                            return /^b/i.test(txt) && columnIndex === 0;
-                        },
+
                         editable_wrapContent   : '<div>',       // wrap all editable cell content... makes this widget work in IE, and with autocomplete
                         editable_trimContent   : true,          // trim content ( removes outer tabs & carriage returns )
                         editable_noEdit        : 'no-edit',     // class name of cell that is not editable
-                        editable_editComplete  : 'editComplete' // event fired after the table content has been edited
+
                     }
                 })
                 .tablesorterPager({
@@ -257,18 +328,6 @@ $option_practicas	= add_options(get_practicas($pdo));
                     container: $pager,
                     size: 10,
                     output: 'showing: {startRow} to {endRow} ({totalRows})'
-                })
-                .children('tbody').on('editComplete', 'td', function(event, config) {
-                    var $this = $(this),
-                        newContent = $this.text(),
-                        cellIndex = this.cellIndex, // there shouldn't be any colspans in the tbody
-                        rowIndex = $this.closest('tr').attr('id'); // data-row-index stored in row id
-                    //alert('new value:'+newContent);
-                    if(newContent!=='') {
-                        //alert('  new value:' + newContent);
-                    }
-                    // Do whatever you want here to indicate
-                    // that the content was updated
                 })
 
         });
@@ -285,25 +344,34 @@ $option_practicas	= add_options(get_practicas($pdo));
         ?>
         <div class="pager" style="padding-left: 20px; padding-top: -20px; margin: 0px; " >
             <div class="ui-grid-b">
-                <div class="ui-block-a" style="width:50%;">
+                <div class="ui-block-a" style="width:30%;">
 
                     <span class="pagedisplay"></span>
-                    <button id="clean" data-theme="b" type="button" href="" data-mini="false" data-inline="true" >Borrar</button>
-                    <button id="save" data-theme="b" type="button" href="" data-mini="false" data-inline="true" >Guardar</button>
-                    <button id="createLine" data-theme="b" type="button" href="home.html" data-mini="false" data-inline="true" >Crear Lineas</button>
+                    <button tabindex="-1" id="save" data-theme="b" type="button" href="" data-mini="false" data-inline="true" >Bajar archivo</button>
 
                 </div>
-                <div class="ui-block-b" style="width:10%;">
+                <div class="ui-block-b" style="width:20%;">
+                    <div data-role="fieldcontain">
+                        <fieldset>
+                            <legend for="datepicker">
+                                Fecha
+                            </legend>
+                            <input name="fecha_busqueda" class="datepicker" placeholder="" value="" data-type="date"/>
+                        </fieldset>
+                    </div>
 
-                    <label for="textinput1" id="margen_icono">
-                        Cantidad registros
-                    </label>
-                    <input align="left" type="text" name="cantidadReg" id="cantidadReg" data-mini="false" data-inline="true" value="" style="width: 100px;"	 data-theme="a"/>
+
 
                 </div>
-                <div class="ui-block-c" style="width:40%;">
+                <div class="ui-block-c" style="width:50%;">
+                    <div id="founded_regisdters">
+                        <ul class="register_founded">
 
+                        </ul>
+
+                    </div>
                 </div>
+
             </div>
         </div>
 
@@ -311,101 +379,13 @@ $option_practicas	= add_options(get_practicas($pdo));
              <button id="clean" data-theme="b" type="button" href="home.html" data-mini="false" data-inline="true" >Borrar</button>
              <button id="save" data-theme="b" type="button" href="home.html" data-mini="false" data-inline="true" >Guardar</button>
         </div-->
-        <div class="ui-grid-c ui-responsive" style="margin: 0px; padding: 0px;">
-            <div class="ui-block-a" style="width: 20%;">
-                <div data-role="fieldcontain">
-                    <fieldset data-role="controlgroup" data-mini="true" style=" margin-right: 0px; padding-top: 0px;">
-                        <label for="textinput1" id="margen_icono" >
-                            Tipo de archivo
-                        </label>
-                        <select name="tipo_archivo" id="tipo_archivo" >
-                            <option value="n/c">select</option>
-                            <? echo $option_tipo_archivo; ?>
-                        </select>
-                    </fieldset>
-                </div>
 
-                <div data-role="fieldcontain">
-                    <fieldset data-role="controlgroup" data-mini="true">
-                        <label for="textinput1" id="margen_icono">
-                            Número de Comprobante
-                        </label>
-                        <select name="numero_comprobante">
-                            <option value="n/c"><? echo $lang_seleccionar ?></option>
-                            <? echo $option_prefijos; ?>
-                        </select>
-                    </fieldset>
-                </div>
-            </div>
-            <div class="ui-block-b" style="width: 40%">
-                <div data-role="fieldcontain">
-                    <fieldset data-role="controlgroup" data-mini="true">
-                        <label for="textinput1" id="margen_icono">
-                            Código de ObraSocial
-                        </label>
-                        <select name="obras_sociales" id="obras_sociales">
-                            <option value="n/c">select</option>
-                            <? echo $option_obras_sociales; ?>
-                        </select>
-                    </fieldset>
-                </div>
 
-                <div data-role="fieldcontain">
-                    <fieldset data-role="controlgroup" data-mini="true">
-                        <label for="textinput1" id="margen_icono">
-                            Código de Practica
-                        </label>
 
-                        <select name="codigo_practica"  class="selectPractica">
-                            <option value="n/c">SELECT</option>
-                            <? echo $option_practicas;?>
-                        </select>
 
-                    </fieldset>
-                </div>
-            </div>
-            <div class="ui-block-c" style="width: 20%">
-                <div data-role="fieldcontain">
-                    <fieldset data-role="controlgroup" data-mini="true">
-                        <label for="textinput1" id="margen_icono">
-                            CUIL
-                        </label>
-                        <select name="prefijo">
-                            <option value="n/c"><? echo $lang_seleccionar ?></option>
-                            <? echo $option_prefijos; ?>
-                        </select>
-                    </fieldset>
-                </div>
 
-                <div data-role="fieldcontain">
-                    <fieldset data-role="controlgroup" data-mini="true">
-                        <label for="textinput1" id="margen_icono">
-                            Provincia
-                        </label>
-                        <select name="provincia" id="provincia">
-                            <option value="n/c">select</option>
-                            <? echo $option_provincias; ?>
-                        </select>
-                    </fieldset>
-                </div>
-            </div>
-            <div class="ui-block-d" style="width: 20%">
-                <div data-role="fieldcontain">
-                    <fieldset data-role="controlgroup" data-mini="true">
-                        <label for="textinput1" id="margen_icono">
-                            Dependencia
-                        </label>
-                        <select name="dependencia" id="dependencia">
-                            <option value="n/c">select</option>
-                            <? echo $option_dependencias; ?>
-                        </select>
-                    </fieldset>
-                </div>
-
-            </div>
-        </div>
         <form name="myForm" id="registros" action="" method="post" enctype="multipart/form-data">
-            <table class="tablesorter" style="width: 100%; float: left;">
+            <table id="idtable" class="tablesorter" style="width: 100%; float: left;">
                 <thead>
                 <tr>
 
@@ -478,7 +458,7 @@ $option_practicas	= add_options(get_practicas($pdo));
                 </td>
 
                 </tfoot>
-                <tbody>
+                <tbody class="registros">
                 <? echo $listado; ?>
                 </tbody>
             </table>
@@ -488,10 +468,4 @@ $option_practicas	= add_options(get_practicas($pdo));
     </div>
 </div>
 </body>
-
-<script>
-
-
-
-</script>
 </html>

@@ -15,7 +15,7 @@ function is_user($pdo,$username)
     return false;
 }
 
-file_put_contents("download.log",print_r($_GET,true));
+
 
 if(isset($_GET["p"])  ){
 
@@ -45,6 +45,17 @@ if(isset($_GET["p"])  ){
 
 
         $files = explode(',',urldecode($_GET["p"]));
+
+
+
+        $files =   str_replace(".","",$files);
+        $files =   str_replace("..","",$files);
+        $files =   str_replace("/","",$files);
+        $files =   str_replace(" ","",$files);
+        $files =   str_replace("!","",$files);
+        $files =   str_replace("*","",$files);
+//         file_put_contents("after.log",print_r($files,true));
+
 
         $filepath = array();
         foreach( $files as $value){
@@ -84,7 +95,7 @@ if(isset($_GET["p"])  ){
         flush(); // Flush system output buffer
         readfile($zipname);
 
-
+        unlink($zipname);
         exit;
 
     }

@@ -86,7 +86,17 @@ $(window).load(function() {
 	<script src="pager/js/pager-custom-controls.js"></script>
 
 	<script id="js">$(function(){
-           
+
+            $(document).on("keydown", function(e) {
+                console.log(e.type, e.target);
+                //alert(e.type+' ... '+ e.target);
+                //e.keyCode==9  tab
+                //e.currentTarget.activeElement.attributes[1].firstChild ==
+
+                //  td.focus();
+            })
+
+
 
 			$(document).on('change', '.targetSelected', function(e) {
 				//console.log(this.options[e.target.selectedIndex].text);
@@ -170,6 +180,8 @@ $(window).load(function() {
                 var obras_sociales =$('#obras_sociales option:selected').val();
                 var dependencia = $('#dependencia option:selected').val();
                 var practicas = $('#practicas option:selected').val();
+               // var year_default = $('#year_default').val();
+
 
                 if(tipo_archivo=='n/c'  || provincia=='n/c' || obras_sociales=='n/c' || dependencia=='n/c'){
 
@@ -183,26 +195,26 @@ $(window).load(function() {
                     var option_tipoemision	= '<option selected value="E">E</option><option value="E">E</option><option  value="I">I</option>    ';
 //					var option_estados =  option_estados.replace('"', '\"');
 //'<td>'+getSelectMainPart('estado',row.estado)+option_estados + '</select></td>';
-		            var tipoopsiontd = 			'<td>'+getSelectMainPart('tipoemision')+option_tipoemision + '</select></td>';
+		            var tipoopsiontd = 			'<td tabindex="6">'+getSelectMainPart('tipoemision')+option_tipoemision + '</select></td>';
 					    row += '<tr>'+
                             '<td tipo>'+tipo_archivo+'</td>'+
                             '<td obras>'+obras_sociales+'</td>' +
                             '<td cuil></td>'+ /*cuil*/
-                            '<td certificado contenteditable="true"></td>'+/*codigo certificado*/
-                            '<td vencimiento contenteditable="true"></td>'+/*vencimiento certificado*/
-                            '<td contenteditable="true"></td>'+/*periodo prestacion*/
-							'<td contenteditable="true"></td>'+/*CUIT prestador*/
-                            '<td contenteditable="true"></td>'+/*tipo de comprobante*/
+                            '<td certificado tabindex="1" contenteditable="true"></td>'+/*codigo certificado*/
+                            '<td vencimiento tabindex="2" contenteditable="true"></td>'+/*vencimiento certificado*/
+                            '<td tabindex="3" contenteditable="true"></td>'+/*periodo prestacion*/
+							'<td tabindex="4" contenteditable="true"></td>'+/*CUIT prestador*/
+                            '<td tabindex="5" contenteditable="true"></td>'+/*tipo de comprobante*/
 						 tipoopsiontd+
                             //'<td contenteditable="true"></td>'+/*tipo emision*/
-                            '<td contenteditable="true"></td>'+/*fecha de emision */
-                            '<td contenteditable="true"></td>'+/*numero CAE o CAI*/
-                            '<td contenteditable="true"></td>'+/*punto de venta*/
-							'<td></td>'+ /*numero comprobante*/
-                            '<td contenteditable="true"></td>'+/*importe de comprobante*/
-                            '<td contenteditable="true"></td>'+/*importe solicitado*/
-                            '<td>'+practicas+'</td>'+/*codigo de practica*/
-                            '<td contenteditable="true"></td>'+/*cantidad*/
+                            '<td tabindex="7" contenteditable="true"></td>'+/*fecha de emision */
+                            '<td tabindex="8" contenteditable="true"></td>'+/*numero CAE o CAI*/
+                            '<td tabindex="9" contenteditable="true"></td>'+/*punto de venta*/
+							'<td tabindex="10"></td>'+ /*numero comprobante*/
+                            '<td tabindex="11" contenteditable="true"></td>'+/*importe de comprobante*/
+                            '<td tabindex="12" contenteditable="true"></td>'+/*importe solicitado*/
+                            '<td tabindex="13">'+practicas+'</td>'+/*codigo de practica*/
+                            '<td tabindex="14" contenteditable="true"></td>'+/*cantidad*/
                             '<td>'+provincia+'</td>'+
                             '<td>'+dependencia+'</td>'+/*dependencia*/
                             '</tr>',
@@ -252,9 +264,9 @@ $(window).load(function() {
 		.tablesorter({
 			theme: 'blue',
 			headers: {
-				0: {resizable: true, true: false, sorter: true},
-				1: {resizable: true, filter: false, sorter: false},
-				2: {resizable: true, filter: false, sorter: false},
+				0: {resizable: true, filter: true, sorter: true},
+				1: {resizable: true, filter: true, sorter: true},
+				2: {resizable: true, filter: true, sorter: true},
 				3: {resizable: true, filter: true, sorter: true},
 				4: {resizable: true, filter: false, sorter: false},
 				5: {resizable: true, filter: false, sorter: false},
@@ -313,9 +325,32 @@ $(window).load(function() {
 				newContent = $this.text(),
 				cellIndex = this.cellIndex, // there shouldn't be any colspans in the tbody
 				rowIndex = $this.closest('tr').attr('id'); // data-row-index stored in row id
-			//alert('new value:'+newContent);
+
 			if(newContent!=='') {
-				//alert('  new value:' + newContent);
+                if (cellIndex==9 || cellIndex4){ // fecha emicion
+
+                    var len = newContent.length;
+                    if(len<6){
+                        //alert('la fecha tiene que tener 6 o mas caracteres');
+                        //return false;
+                    }
+                    if(len===6){
+
+                        //console.log('mes:'+dia+' mes'+mes);
+                    }else if(len===8){
+                        var dia = newContent.substring(0, 2);
+                        var mes = newContent.substring(2, 4);
+                        if(dia>31 || mes >12){
+                          //  alert('el dia no puede ser mayor de 31, el mes no puede ser mayor de 12');
+                            //return false;
+                        }
+
+                        //console.log('mes:'+dia+' mes'+mes);
+                    }
+
+                }
+
+				//alert('  new value:' + newContent+' cell:'+cellIndex);
 			}
 			// Do whatever you want here to indicate
 			// that the content was updated
@@ -335,24 +370,27 @@ $(window).load(function() {
 				$listado .= "";
 		   ?>
         <div class="pager" style="padding-left: 20px; padding-top: -20px; margin: 0px; " >
-            <div class="ui-grid-b">
-                <div class="ui-block-a" style="width:50%;">
+            <div class="ui-grid-c">
+                <div class="ui-block-a" style="width:30%;">
 
                             <span class="pagedisplay"></span>
-                            <button id="clean" data-theme="b" type="button" href="" data-mini="false" data-inline="true" >Borrar</button>
-                            <button id="save" data-theme="b" type="button" href="" data-mini="false" data-inline="true" >Guardar</button>
-                            <button id="createLine" data-theme="b" type="button" href="home.html" data-mini="false" data-inline="true" >Crear Lineas</button>
+                            <button tabindex="-1" id="clean" data-theme="b" type="button" href="" data-mini="false" data-inline="true" >Borrar</button>
+                            <button tabindex="-1" id="save" data-theme="b" type="button" href="" data-mini="false" data-inline="true" >Guardar</button>
+
 
                 </div>
                 <div class="ui-block-b" style="width:10%;">
 
-                        <label for="textinput1" id="margen_icono">
+                        <label for="textinput1">
                             Cantidad registros
                         </label>
                         <input align="left" type="text" name="cantidadReg" id="cantidadReg" data-mini="false" data-inline="true" value="" style="width: 100px;"	 data-theme="a"/>
 
                 </div>
-                <div class="ui-block-c" style="width:40%;">
+                <div class="ui-block-c" style="margin-left:3%;  width:20%;">
+					<button tabindex="-1" id="createLine" data-theme="b" type="button" href="home.html" data-mini="false" data-inline="true" >Crear Lineas</button>
+                </div>
+                <div class="ui-block-d" style="width:40%;">
 
                 </div>
             </div>
@@ -362,11 +400,11 @@ $(window).load(function() {
              <button id="clean" data-theme="b" type="button" href="home.html" data-mini="false" data-inline="true" >Borrar</button>
              <button id="save" data-theme="b" type="button" href="home.html" data-mini="false" data-inline="true" >Guardar</button>
         </div-->
-		<div class="ui-grid-c ui-responsive" style="margin: 0px; padding: 0px;">
+		<div class="ui-grid-c ui-responsive">
 			<div class="ui-block-a" style="width: 20%;">
 				<div data-role="fieldcontain">
-					<fieldset data-role="controlgroup" data-mini="true" style=" margin-right: 0px; padding-top: 0px;">
-						<label for="textinput1" id="margen_icono" >
+					<fieldset data-role="controlgroup" data-mini="true" >
+						<label for="textinput1"  >
 							Tipo de archivo
 						</label>
 						<select name="tipo_archivo" id="tipo_archivo" >
@@ -376,9 +414,9 @@ $(window).load(function() {
 					</fieldset>
 				</div>
 
-				<div data-role="fieldcontain">
+				<div data-role="fieldcontain" >
 					<fieldset data-role="controlgroup" data-mini="true">
-						<label for="textinput1" id="margen_icono">
+						<label for="textinput1">
 							Número de Comprobante
 						</label>
 						<select name="numero_comprobante">
@@ -388,14 +426,14 @@ $(window).load(function() {
 					</fieldset>
 				</div>
 			</div>
-			<div class="ui-block-b" style="width: 40%">
-				<div data-role="fieldcontain">
+			<div class="ui-block-b" style="width: 50%">
+				<div style="padding-top: 4%">
 					<fieldset data-role="controlgroup" data-mini="true">
-						<label for="textinput1" id="margen_icono">
+						<label for="textinput1">
 							Código de ObraSocial
 						</label>
-						<select name="obras_sociales" id="obras_sociales">
-							<option value="n/c">select</option>
+						<select data-role="none"  name="obras_sociales" id="obras_sociales" class="selectObras" >
+							<option value="n/c">SELECT</option>
 							<? echo $option_obras_sociales; ?>
 						</select>
 					</fieldset>
@@ -403,10 +441,10 @@ $(window).load(function() {
 
 				<div data-role="fieldcontain">
 					<fieldset data-role="controlgroup" data-mini="true">
-						<label for="textinput1" id="margen_icono">
+						<label for="textinput1">
 							Código de Practica
 						</label>
-						<select name="practicas" class="selectPractica" id="practicas">
+						<select name="practicas" id="practicas"class="selectPractica" >
 							<option value="n/c">SELECT</option>
 							<? echo $option_practicas; ?>
 						</select>
@@ -416,7 +454,7 @@ $(window).load(function() {
 			<div class="ui-block-c" style="width: 20%">
 				<div data-role="fieldcontain">
 					<fieldset data-role="controlgroup" data-mini="true">
-						<label for="textinput1" id="margen_icono">
+						<label for="textinput1">
 							CUIL
 						</label>
 						<select name="prefijo">
@@ -428,7 +466,7 @@ $(window).load(function() {
 
 				<div data-role="fieldcontain">
 					<fieldset data-role="controlgroup" data-mini="true">
-						<label for="textinput1" id="margen_icono">
+						<label for="textinput1">
 							Provincia
 						</label>
 						<select name="provincia" id="provincia">
@@ -438,13 +476,13 @@ $(window).load(function() {
 					</fieldset>
 				</div>
 			</div>
-			<div class="ui-block-d" style="width: 20%">
-                <div data-role="fieldcontain">
+			<div class="ui-block-d" style="width: 10%">
+                <div style="padding-top: 10%">
                     <fieldset data-role="controlgroup" data-mini="true">
-                        <label for="textinput1" id="margen_icono">
+                        <label for="textinput1">
                             Dependencia
                         </label>
-                        <select name="dependencia" id="dependencia">
+                        <select data-role="none" name="dependencia" id="dependencia">
                             <option value="n/c">select</option>
                             <? echo $option_dependencias; ?>
                         </select>
@@ -454,7 +492,7 @@ $(window).load(function() {
 			</div>
 		</div>
     <form name="myForm" id="registros" action="" method="post" enctype="multipart/form-data">
-			<table class="tablesorter" style="width: 100%; float: left;">
+			<table id="idtable" class="tablesorter" style="width: 100%; float: left;">
 				<thead>
 						<tr>
 						 
