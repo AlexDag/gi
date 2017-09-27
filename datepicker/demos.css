@@ -1,0 +1,15 @@
+
+table .ui-datepicker-calendar {
+	font-size: 1em;
+}
+
+.demo-description .ui-datepicker-calendar{
+	clear: both;
+	padding: 12px;
+	font-size: 1.3em;
+	line-height: 1.4em;
+}
+
+.ui-draggable .ui-datepicker-calendar, .ui-droppable .ui-datepicker-calendar{
+	background-position: top;
+}
