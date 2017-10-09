@@ -3,10 +3,6 @@ ob_start();
 include_once ("conexion.php");
 require ("lib/password.php");
 include_once("common.php");
-
-
-
-
 ?>
 
 <!DOCTYPE html>
@@ -35,8 +31,12 @@ include_once("common.php");
         <!-- Home -->
         <div data-role="page" id="page1">
                  <?php
+                 if( isset( $_SESSION['usuario'] ) ){
+                     echo 'user:'.$_SESSION['usuario'];
+                 }else
+                     echo 'not user:';
 
-                 if(isset($_POST['usuario'])){
+                 if( !isset( $_SESSION['usuario'] ) ){
 
 
                      $usuario=$_POST['usuario'];
@@ -65,7 +65,7 @@ include_once("common.php");
                          $_SESSION['usuario'] = $usuario;
 
                       include "header.php";
-                         include "menu_principal.php";
+                     include "menu_principal.php";
 /*
                          $obrasarr = array();
                          $registers ='1|1|1|1|1';
@@ -91,12 +91,17 @@ include_once("common.php");
 
                             echo "<p>  Error al identificar el usuario </p>";
                             session_destroy();
-                            header('Location: index.php?nocache='.time(), true, 302);
+                            header('Location: index.php222?nocache='.time(), true, 302);
                             exit;
                         }
                  }else{
-                     header('Location: index.php?nocache='.time(), true, 302);
+
+                     include "header.php";
+                     include "menu_principal.php";
+                     /*
+                     header('Location: index.php111?nocache='.time(), true, 302);
                      exit();
+                     */
                  }?>
         </div>
     </body>
