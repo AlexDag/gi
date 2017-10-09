@@ -1,18 +1,6 @@
 <?php
 
 
-/*
-define('DB_HOST', getenv('OPENSHIFT_MYSQL_DB_HOST'));
-define('DB_PORT',getenv('OPENSHIFT_MYSQL_DB_PORT'));
-define('DB_USER',getenv('OPENSHIFT_MYSQL_DB_USERNAME'));
-define('DB_PASS',getenv('OPENSHIFT_MYSQL_DB_PASSWORD'));
-define('DB_NAME',getenv('OPENSHIFT_GEAR_NAME'));
-*/
-define('DB_HOST', 'localhost');
-define('DB_PORT',3306);
-define('DB_USER','id3066980_alex23ua');
-define('DB_PASS','F0st1rR4Cnn');
-define('DB_NAME','id3066980_gi');
 
 
 $dsn = 'mysql:dbname='.DB_NAME.';host='.DB_HOST.';port='.DB_PORT;
