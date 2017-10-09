@@ -22,13 +22,6 @@ if(isset($_GET["p"])  ){
 
 
 
-    file_put_contents("pp.log",print_r($_GET["p"],true));
-
-    define('DB_HOST', 'localhost');
-    define('DB_PORT',3306);
-    define('DB_USER','id3066980_alex23ua');
-    define('DB_PASS','F0st1rR4Cnn');
-    define('DB_NAME','id3066980_gi');
 
     $dsn = 'mysql:dbname='.DB_NAME.';host='.DB_HOST.';port='.DB_PORT;
 
@@ -53,7 +46,7 @@ if(isset($_GET["p"])  ){
         $files =   str_replace(" ","",$files);
         $files =   str_replace("!","",$files);
         $files =   str_replace("*","",$files);
-//         file_put_contents("after.log",print_r($files,true));
+
 
 
         $filepath = array();
@@ -68,17 +61,16 @@ if(isset($_GET["p"])  ){
             $zipname = 'gestion_integracion.zip';
             $zip = new ZipArchive;
 
-            file_put_contents("zip.log",print_r($filepath,true));
+
         $zip->open($zipname, ZipArchive::CREATE);
 
         foreach ($filepath as $file) {
-            file_put_contents("download_.log"+$file,print_r($file,true));
             $zip->addFile($file);
         }
         $zip->close();
 
 
-            file_put_contents("zip.log",print_r($zipname,true));
+
 
         } catch(Exception $e) {
             echo 'ERROR_pdo: ' . $e->getMessage();
@@ -97,7 +89,7 @@ if(isset($_GET["p"])  ){
 
         unlink($zipname);
 
-        file_put_contents("zip_sent.log",print_r($zipname,true));
+
 
         exit;
 
