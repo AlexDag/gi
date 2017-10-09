@@ -1,7 +1,6 @@
 <?php @session_start();
 include ("conexion.php");
-
-
+$listado = "";
 ?>
 <!DOCTYPE html>
 <html>
@@ -235,6 +234,7 @@ include ("conexion.php");
                 $.ajax({
                     type: "POST",
                     url: "crear_archivos.php",
+
                     cache: false,
                     data: {datos:data},
                     success: onSuccessCrearArchivos,
@@ -337,9 +337,9 @@ include ("conexion.php");
 <div id="dvLoading"></div>
 <!-- Home -->
 <div data-role="page" id="consulta">
-    <?  include "header.php"; ?>
+    <?php include "header.php"; ?>
     <div data-role="content">
-        <?
+        <?php
         $listado .= "";
         ?>
         <div class="pager" style="padding-left: 20px; padding-top: -20px; margin: 0px; " >
@@ -459,7 +459,7 @@ include ("conexion.php");
 
                 </tfoot>
                 <tbody class="registros">
-                <? echo $listado; ?>
+                <?php echo $listado; ?>
                 </tbody>
             </table>
         </form>

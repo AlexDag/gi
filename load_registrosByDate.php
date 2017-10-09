@@ -14,7 +14,7 @@ if( (is_user($pdo, $user)) && (isset($_POST['datos']))  ) {
 
 
 
-    $sql = "SELECT registro_unico, fecha_creacion FROM registros_descapacitados WHERE DATE_FORMAT( fecha_creacion, '%d-%m-%Y' ) = ?  AND user = ? GROUP BY registro_unico";
+    $sql = "SELECT registro_unico, fecha_creacion FROM registros_descapacitados WHERE DATE_FORMAT( fecha_creacion, '%d-%m-%Y' ) = ?  AND user = ? GROUP BY registro_unico order by fecha_creacion desc";
   // $sql = "SELECT registro_unico, fecha_creacion FROM registros_descapacitados ";
 
         //file_put_contents("load4.log",'inside ....'.$sql,true);

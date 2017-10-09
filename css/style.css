@@ -1186,3 +1186,20 @@ p.nombre_producto {
     height: 60px;
     overflow-y:scroll;
 }
+
+.reducewidth .ui-controlgroup-controls .ui-radio {
+    width : 80px !important;
+}
+.reducewidth .ui-controlgroup-controls .ui-radio label {
+    width : 80px !important;
+}
+.labelpractica{
+
+  font: normal 9px courier !important;
+
+    margin-right:15px;
+}
+
+#color{
+    border: 1px solid #c5e1e3;
+}

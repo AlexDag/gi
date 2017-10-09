@@ -1,42 +1,13 @@
-﻿<?php session_start();
+<?php session_start();
+ob_start();
 include ("conexion.php");
 include ("common.php");
-
-
-function getFullDate6($fecha){
-    $dia =substr($fecha,0,1);
-    $mes=substr($fecha,1,1);
-    $year=substr($fecha,2);
-    return '0'.$dia.'/'.'0'.$mes.'/'.$year;
-}
-function getFullDateForDataBase6($fecha){
-    $dia =substr($fecha,0,1);
-    $mes=substr($fecha,1,1);
-    $year=substr($fecha,2);
-    return $year.'/0'.$mes.'/0'.$dia;
-}
-
-function getFullDate8($fecha){
-    $dia =substr($fecha,0,2);
-    $mes=substr($fecha,2,2);
-    $year=substr($fecha,4);
-    return $dia.'/'.$mes.'/'.$year;
-}
-
-//12122016
-function getFullDateForDataBase8($fecha){
-    $dia =substr($fecha,0,2);
-    $mes=substr($fecha,2,2);
-    $year=substr($fecha,4);
-    return $year.'/'.$mes.'/'.$dia;
-}
-
 //cc
 //file_put_contents("postLOg.log",print_r($points,true));
  $user = $_SESSION['usuario'];
 
 //var_dump ($user);
-file_put_contents("postLOg.log",print_r($_POST['datos'],true));
+//file_put_contents("postLOg.log",print_r($_POST['datos'],true));
  if( (is_user($pdo, $user)) && (isset($_POST['datos']))  ) {
 	 $datos = $_POST['datos'] ;
 
@@ -68,7 +39,7 @@ file_put_contents("postLOg.log",print_r($_POST['datos'],true));
 			 $cantidad = $res[16];
 			 $provincia = $res[17];
 			 $dependencia = $res[18];
-			 $registo_unico = $res[19];
+			// $registo_unico = $res[19];
 
 
              $registers = $res[0].'|'.$res[1].'|'.$res[2].'|'.$res[3].'|'.$res[4].'|'.$res[5].'|'.$res[6].'|'
@@ -78,7 +49,12 @@ file_put_contents("postLOg.log",print_r($_POST['datos'],true));
 
 
              $ffile= str_pad($res[1], 6, '0', STR_PAD_LEFT);
-             $obrasarr[$ffile]=  $obrasarr[$ffile].$registers;
+
+             if(isset($obrasarr[$ffile]))   {
+                 $obrasarr[$ffile].= $registers;
+             } else {
+                 $obrasarr[$ffile]= $registers;
+             }
 
 		 }//foreach
 
@@ -100,36 +76,18 @@ file_put_contents("postLOg.log",print_r($_POST['datos'],true));
              }
 
 		 }
-
-		 header('Content-Type: application/json; charset=UTF-8');
+         header('Content-Type: application/json; charset=UTF-8');
 		 die(json_encode(array('message' => $fileList)));
-
 	 } catch (Exception $e) {
-
-		 file_put_contents("error.log",print_r($e->getMessage(),true));
-
-
+         file_put_contents("error.log",print_r($e->getMessage(),true));
 		 header('HTTP/1.1 500 Error al re-crear los archivos...');
 		 header('Content-Type: application/json; charset=UTF-8');
 		 die(json_encode(array('message' => 'ERROR', 'code' => 1337)));
 	 }
  }
  else {
-
 		 header('HTTP/1.1 500 Error al re-crear los archivos');
 		 header('Content-Type: application/json; charset=UTF-8');
 		 die(json_encode(array('message' => 'ERROR', 'code' => 1337)));
-
  }
-
-				 //var_dump ($_POST);
-				 //file_put_contents("postLOg.log",print_r($_POST,true));
-/*
-				 if(isset($_POST))
-				 {
-					 foreach($_POST as $inputName => $inputValue)
-					 {
-					 }
-				 }
-*/
 ?>

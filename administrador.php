@@ -1,9 +1,12 @@
-<? session_start();
-
-
+<?php session_start();
+ob_start();
 include_once ("conexion.php");
 require ("lib/password.php");
 include_once("common.php");
+
+
+
+
 ?>
 
 <!DOCTYPE html>
@@ -33,7 +36,8 @@ include_once("common.php");
         <div data-role="page" id="page1">
                  <?php
 
-                 if($_SESSION['usuario'] ==null){
+                 if(isset($_POST['usuario'])){
+
 
                      $usuario=$_POST['usuario'];
                      $clave=$_POST['clave'];
@@ -54,14 +58,33 @@ include_once("common.php");
                              echo "<p>  Error al identificar el usuario </p>";
                              session_destroy();
                              header('Location: index.php?nocache='.time(), true, 302);
-                             exit;
+                             exit();
                          }
 
 
                          $_SESSION['usuario'] = $usuario;
 
-                         include "header.php";
+                      include "header.php";
                          include "menu_principal.php";
+/*
+                         $obrasarr = array();
+                         $registers ='1|1|1|1|1';
+                         $registers2 ='2|2|2|1|1';
+                         $ffile = '001';
+                         $ffile2 = '002';
+
+
+                             $obrasarr[$ffile]=  $registers;
+                         $obrasarr[$ffile2]=  $registers2;
+
+
+                         foreach ($obrasarr as $key => $value) {
+                             // save to file
+
+                             echo '' .$key.'  '. $obrasarr[$key].'    '.'\n'.'.....';
+                         }
+*/
+
 
                      }
                         else{
@@ -70,22 +93,11 @@ include_once("common.php");
                             session_destroy();
                             header('Location: index.php?nocache='.time(), true, 302);
                             exit;
-
-                            ?>
-                            <script>  </script>
-                            <?
-
-
                         }
-                 }else {
-
-                     include "header.php";
-                     include "menu_principal.php";
-                 }
-				  ?>
-				
-
-				
+                 }else{
+                     header('Location: index.php?nocache='.time(), true, 302);
+                     exit();
+                 }?>
         </div>
     </body>
 </html>

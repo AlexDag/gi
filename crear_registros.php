@@ -1,6 +1,8 @@
-﻿<?php @session_start();
+﻿<?php session_start();
 include ("conexion.php");
 include("common.php");
+//error_reporting( error_reporting() & ~E_NOTICE );
+
 
 $option_tipo_archivo	= add_options(get_tipo_archivo($pdo));
 $option_provincias	= add_options(get_provincias($pdo));
@@ -8,7 +10,7 @@ $option_obras_sociales	= add_options(get_obras_sociales($pdo));
 $option_dependencias	= add_options(get_dependencias($pdo));
 $option_practicas	= add_options(get_practicas($pdo));
 
-
+$listado="";
 
 ?>
 <!DOCTYPE html>
@@ -22,7 +24,8 @@ $option_practicas	= add_options(get_practicas($pdo));
         </title>
 
 <style>
-	#dvLoading
+
+     #dvLoading
 	{
 	 position: fixed;
 	left: 0px;
@@ -34,38 +37,61 @@ $option_practicas	= add_options(get_practicas($pdo));
 }
 </style>
         <link rel="stylesheet" href="css/style.css" />
-
         <link rel="stylesheet" href="css/tabla.css" />
-       <link rel="stylesheet" href="css/jquery.mobile-1.3.1.min.css" />
+
+
+        <link rel="stylesheet" href="css/jquery.mobile-1.3.1.min.css" />
 
 		<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
 		<script src="http://code.jquery.com/mobile/1.3.1/jquery.mobile-1.3.1.min.js"></script>
 		<script src="js/common.js"></script>
 
-       	       <script>
+<script>
+
+
+    function copyFirstCell(celId)
+    {
+        $allRows = $('tbody').find('tr');
+        rlength = $allRows.length;
+        val = $allRows.eq(0).find('td').eq(celId).text();
+
+        for (var i=1;i<rlength;i++){
+            if($allRows.eq(i).find('td').eq(celId).text()==='') {
+                $allRows.eq(i).find('td').eq(celId).find('[contenteditable]').text(val);
+            }
+        }
+
+        $allRows.eq(0).find('td').eq(celId).find('[contenteditable]').focus();
+    }
 
 $(window).load(function() {
 	$("#dvLoading").fadeOut("slow");
 })
-5	</script>
-		<!-- Demo stuff -->
-	<link rel="stylesheet" href="pager/docs/css/jq.css">
-	<link href="pager/docs/css/prettify.css" rel="stylesheet">
-	<script src="pager/docs/js/prettify.js"></script>
-	<script src="pager/docs/js/docs.js"></script>
+	</script>
+
 
     <!-- Tablesorter: required -->
-    <link rel="stylesheet" href="pager/css/theme.blue.css">
+    <!--link rel="stylesheet" href="pager/css/theme.blue.css">
     <script src="pager/js/jquery.tablesorter.js"></script>
     <script src="pager/js/parsers/parser-input-select.js"></script>
     <script src="pager/js/jquery.tablesorter.widgets.js"></script>
-    <script src="pager/js/widgets/widget-editable.js"></script>
+    <script src="pager/js/widgets/widget-editable.js"></script-->
+    <link rel="stylesheet" href="https://mottie.github.io/tablesorter/css/theme.blue.css">
+    <script src="https://mottie.github.io/tablesorter/js/jquery.tablesorter.js"></script>
+    <script src="https://mottie.github.io/tablesorter/js/jquery.tablesorter.widgets.js"></script>
+    <script src="https://mottie.github.io/tablesorter/js/widgets/widget-editable.js"></script>
+
+
+
 
 
 	<!-- Tablesorter: optional -->
 	<link rel="stylesheet" href="pager/addons/pager/jquery.tablesorter.pager.css">
 	<style>
-	.left { float: left; }
+
+
+
+        .left { float: left; }
 	.right {
 		float: right;
 		-webkit-user-select: none;
@@ -83,19 +109,32 @@ $(window).load(function() {
 	}
 	</style>
 	<script src="pager/addons/pager/jquery.tablesorter.pager.js"></script>
-	<script src="pager/js/pager-custom-controls.js"></script>
+	<script src="pager/js/pager-custom-controls.js"></script
+        >
 
 	<script id="js">$(function(){
 
-            $(document).on("keydown", function(e) {
+
+
+
+			$("input[type='radio']").bind( "change", function(event, ui) {
+				console.log(ui);
+
+				$("input[type='radio']").attr("checked",false).checkboxradio("refresh");
+				event.currentTarget.checked = true;
+				//$("input[type='radio']").checkboxradio("refresh");
+			});
+
+            /*$(document).on("keydown", function(e) {
                 console.log(e.type, e.target);
                 //alert(e.type+' ... '+ e.target);
                 //e.keyCode==9  tab
                 //e.currentTarget.activeElement.attributes[1].firstChild ==
 
-                //  td.focus();
-            })
+                if(e.ctrlKey && e.keyCode == 68){
 
+                }
+            })*/
 
 
 			$(document).on('change', '.targetSelected', function(e) {
@@ -108,6 +147,36 @@ $(window).load(function() {
 
 			});
 
+            function editComplete(el) {
+                var $el = $(el),
+                    newContent = $el.text(),
+                // there shouldn't be any colspans in the tbody
+                    cellIndex = el.cellIndex,
+                // data-row-index stored in row id
+                    rowIndex = $el.closest('tr').attr('id');
+
+            };
+
+
+            function moveCells(el, dir) {
+                var $el = $(el),
+                    changed = false,
+                // there shouldn't be any colspans in the tbody
+                    cellIndex = el.cellIndex,
+                    $allRows = $el.closest('tbody').find('tr'),
+                    rowIndex = $allRows.index($el.closest('tr'));
+                if (dir === "ArrowUp" && rowIndex - 1 >= 0) {
+                    rowIndex--;
+                    changed = true;
+                } else if (dir === "ArrowDown" && rowIndex + 1 < $allRows.length) {
+                    rowIndex++;
+                    changed = true;
+                }
+                if (changed) {
+                    $el.blur();
+                    $allRows.eq(rowIndex).find('td').eq(cellIndex).find('[contenteditable]').focus();
+                }
+            };
 
 
             function onSuccess(data, status)
@@ -129,6 +198,14 @@ $(window).load(function() {
             };
 
 
+
+            $('body').on('click','.rowclick',function(){
+                var idrow =   this.parentElement.id;
+                $('#'+idrow).remove();
+                $table
+                    .trigger('update');
+            });
+
             $("#save").click(function(){
 
                var data=[];
@@ -138,12 +215,8 @@ $(window).load(function() {
                      var indexed_array = {};
 
                      for(var i=0;i<count;i++){
-						 if(i==8){
-							 //tipo emicion
-							 indexed_array[i] = $(this).find("select").val()
-						 }else{
 							 indexed_array[i] =   this.children[i].textContent;
-						 }
+
                      }
 
                     indexed_array[count] = register;
@@ -170,53 +243,48 @@ $(window).load(function() {
                     .trigger('update');
                 return false;
             });
-			$("#createLine").click(function() {
-				var cantidadReg = $("#cantidadReg").val();
+			$(".createLine").click(function() {
+				//var cantidadReg = $("#cantidadReg").val();
+                //console.log(this);
+                var countInt =  0;
+                if(this.id==='l1')
+				  var countInt =  1;
+                else
+                if(this.id==='l2')
+                    var countInt =  2;
+                if(this.id==='l3')
+                    var countInt =  3;
 
-				var countInt = parseInt(cantidadReg);
+                var tipo_archivo = $("#tipoarchivo :radio:checked").val();
 
-                var tipo_archivo = $('#tipo_archivo option:selected').val();
-                var provincia = $('#provincia option:selected').val();
-                var obras_sociales =$('#obras_sociales option:selected').val();
-                var dependencia = $('#dependencia option:selected').val();
                 var practicas = $('#practicas option:selected').val();
-               // var year_default = $('#year_default').val();
-
-
-                if(tipo_archivo=='n/c'  || provincia=='n/c' || obras_sociales=='n/c' || dependencia=='n/c'){
-
-                     alert('Todos los campos obligatorios tienen que tener valores !');  return false;
-                }
 
 
                 var row='';
 				for(var i=0;i<countInt;i++){
 
-                    var option_tipoemision	= '<option selected value="E">E</option><option value="E">E</option><option  value="I">I</option>    ';
-//					var option_estados =  option_estados.replace('"', '\"');
-//'<td>'+getSelectMainPart('estado',row.estado)+option_estados + '</select></td>';
-		            var tipoopsiontd = 			'<td tabindex="6">'+getSelectMainPart('tipoemision')+option_tipoemision + '</select></td>';
-					    row += '<tr>'+
-                            '<td tipo>'+tipo_archivo+'</td>'+
-                            '<td obras>'+obras_sociales+'</td>' +
-                            '<td cuil></td>'+ /*cuil*/
-                            '<td certificado tabindex="1" contenteditable="true"></td>'+/*codigo certificado*/
-                            '<td vencimiento tabindex="2" contenteditable="true"></td>'+/*vencimiento certificado*/
-                            '<td tabindex="3" contenteditable="true"></td>'+/*periodo prestacion*/
-							'<td tabindex="4" contenteditable="true"></td>'+/*CUIT prestador*/
-                            '<td tabindex="5" contenteditable="true"></td>'+/*tipo de comprobante*/
-						 tipoopsiontd+
-                            //'<td contenteditable="true"></td>'+/*tipo emision*/
-                            '<td tabindex="7" contenteditable="true"></td>'+/*fecha de emision */
-                            '<td tabindex="8" contenteditable="true"></td>'+/*numero CAE o CAI*/
-                            '<td tabindex="9" contenteditable="true"></td>'+/*punto de venta*/
-							'<td tabindex="10"></td>'+ /*numero comprobante*/
-                            '<td tabindex="11" contenteditable="true"></td>'+/*importe de comprobante*/
-                            '<td tabindex="12" contenteditable="true"></td>'+/*importe solicitado*/
-                            '<td tabindex="13">'+practicas+'</td>'+/*codigo de practica*/
-                            '<td tabindex="14" contenteditable="true"></td>'+/*cantidad*/
-                            '<td>'+provincia+'</td>'+
-                            '<td>'+dependencia+'</td>'+/*dependencia*/
+
+					    row += '<tr r="R" id='+makeidAlfaNumber(5)+'>'+
+							'<td class="no-edit rowclick"><img src="css/images/none_thumb.jpg" style="width: 10px;"></td>'+
+                            '<td class="no-edit">'+tipo_archivo+'</td>'+
+                            '<td t="C"></td>' + /*obras*/
+                            '<td t="C"></td>'+ /*cuil*/
+                            '<td t="C"></td>'+/*codigo certificado*/
+                            '<td t="C" ></td>'+/*vencimiento certificado*/
+                            '<td t="C" ></td>'+/*periodo prestacion*/
+							'<td t="C" ></td>'+/*CUIT prestador*/
+                            '<td t="C" ></td>'+/*tipo de comprobante*/
+                            '<td t="C" ></td>'+/*tipo emision*/
+                            '<td t="C" ></td>'+/*fecha de emision */
+                            '<td t="C" ></td>'+/*numero CAE o CAI*/
+                            '<td t="C" ></td>'+/*punto de venta*/
+							'<td t="C" ></td>'+ /*numero comprobante*/
+                            '<td t="C" ></td>'+/*importe de comprobante*/
+                            '<td t="C" ></td>'+/*importe solicitado*/
+                            '<td t="C" >'+practicas+'</td>'+/*codigo de practica*/
+                            '<td t="C" ></td>'+/*cantidad*/
+                            '<td t="C" ></td>'+/*provincia*/
+
                             '</tr>',
 						 $row = $(row),
 						resort = true;
@@ -229,6 +297,29 @@ $(window).load(function() {
                 $('table')
                     .trigger('update');
 
+
+                var allRows = $("[r=R]");
+                numOfRows = $("[r=R]").length;
+               rowObj = $("[r=R]");
+                 oneColLength = rowObj[0].children.length-1;// menos celda de delete image
+                 //colObj = document.getElementsByTagName('td');
+                colObj = $("[t=C]");
+                 totalData = rowObj.length * colObj.length;
+                 dataCounter = 0;
+                 matrixObj = new Array(rowObj.length);
+
+                for(var i = 0; i < matrixObj.length; i++){
+                    matrixObj[i] = new Array(oneColLength);
+                }
+
+                for(var i = 0; i < numOfRows; i++){
+                    for(var j = 0; j < oneColLength; j++){
+                        matrixObj[i][j] = colObj[dataCounter++];
+                    }
+                }
+
+               // $allRows.eq(rowIndex).find('td').eq(cellIndex).find('[contenteditable]').focus();
+                $(matrixObj[0][0]).find('[contenteditable]').focus();
 
 				return false;
 			});
@@ -264,10 +355,10 @@ $(window).load(function() {
 		.tablesorter({
 			theme: 'blue',
 			headers: {
-				0: {resizable: true, filter: true, sorter: true},
+				0: {resizable: false, filter: false, sorter: false},
 				1: {resizable: true, filter: true, sorter: true},
-				2: {resizable: true, filter: true, sorter: true},
-				3: {resizable: true, filter: true, sorter: true},
+				2: {resizable: true, filter: true, sorter: false},
+				3: {resizable: true, filter: true, sorter: false},
 				4: {resizable: true, filter: false, sorter: false},
 				5: {resizable: true, filter: false, sorter: false},
 				6: {resizable: true, filter: false, sorter: false},
@@ -282,21 +373,21 @@ $(window).load(function() {
 				15: {resizable: true, filter: false, sorter: false},
 				16: {resizable: true, filter: false, sorter: false},
 				17: {resizable: true, filter: false, sorter: false},
-				18: {resizable: true, filter: true, sorter: true}
+                18: {resizable: true, filter: false, sorter: false},
 
 			},
 			widgets: ['zebra', 'columns','editable','filter'],
 			widgetOptions: {
-				editable_columns       : [4,5,6],       // or "0-2" (v2.14.2); point to the columns to make editable (zero-based index)
-				editable_enterToAccept : true,          // press enter to accept content, or click outside if false
+				editable_columns       : [2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18],       // or "0-2" (v2.14.2); point to the columns to make editable (zero-based index)
+				editable_enterToAccept : false,          // press enter to accept content, or click outside if false
 				editable_autoAccept    : true,          // accepts any changes made to the table cell automatically (v2.17.6)
 				editable_autoResort    : false,         // auto resort after the content has changed.
-				editable_validate      : null,          // return a valid string: function(text, original, columnIndex){ return text; }
-				editable_focused       : function(txt, columnIndex, $element) {
-					// $element is the div, not the td
-					// to get the td, use $element.closest('td')
-					$element.addClass('focused');
-				},
+				editable_validate      : null,
+                editable_focused: function(txt, columnIndex, $element) {
+                    // $element is the div, not the td
+                    // to get the td, use $element.closest('td')
+                    $element.addClass('focused');
+                },
 				editable_blur          : function(txt, columnIndex, $element) {
 					// $element is the div, not the td
 					// to get the td, use $element.closest('td')
@@ -320,41 +411,13 @@ $(window).load(function() {
 			output: 'showing: {startRow} to {endRow} ({totalRows})'
 		})
 
-        .children('tbody').on('editComplete', 'td', function(event, config) {
-			var $this = $(this),
-				newContent = $this.text(),
-				cellIndex = this.cellIndex, // there shouldn't be any colspans in the tbody
-				rowIndex = $this.closest('tr').attr('id'); // data-row-index stored in row id
-
-			if(newContent!=='') {
-                if (cellIndex==9 || cellIndex4){ // fecha emicion
-
-                    var len = newContent.length;
-                    if(len<6){
-                        //alert('la fecha tiene que tener 6 o mas caracteres');
-                        //return false;
-                    }
-                    if(len===6){
-
-                        //console.log('mes:'+dia+' mes'+mes);
-                    }else if(len===8){
-                        var dia = newContent.substring(0, 2);
-                        var mes = newContent.substring(2, 4);
-                        if(dia>31 || mes >12){
-                          //  alert('el dia no puede ser mayor de 31, el mes no puede ser mayor de 12');
-                            //return false;
-                        }
-
-                        //console.log('mes:'+dia+' mes'+mes);
-                    }
-
-                }
-
-				//alert('  new value:' + newContent+' cell:'+cellIndex);
-			}
-			// Do whatever you want here to indicate
-			// that the content was updated
-		});
+        .children('tbody').on('editComplete keyup', 'td', function(event, config) {
+            if (event.type === 'editComplete') {
+                editComplete(this);
+            } else if (event.key.indexOf('Arrow') === 0) {
+                moveCells(this, event.key);
+            }
+        });
 
 
 });
@@ -364,34 +427,61 @@ $(window).load(function() {
 	<div id="dvLoading"></div>
         <!-- Home -->
         <div data-role="page" id="consulta">
-			 <?  include "header.php"; ?>
+			 <?php  include "header.php"; ?>
             <div data-role="content">
-			<?
+			<?php
 				$listado .= "";
 		   ?>
         <div class="pager" style="padding-left: 20px; padding-top: -20px; margin: 0px; " >
+
+
+
             <div class="ui-grid-c">
-                <div class="ui-block-a" style="width:30%;">
+                <div class="ui-block-a" style="width:20%;">
 
-                            <span class="pagedisplay"></span>
-                            <button tabindex="-1" id="clean" data-theme="b" type="button" href="" data-mini="false" data-inline="true" >Borrar</button>
-                            <button tabindex="-1" id="save" data-theme="b" type="button" href="" data-mini="false" data-inline="true" >Guardar</button>
+                            <!--span class="pagedisplay"></span-->
+
+					<fieldset id="tipoarchivo" class="reducewidth" data-role="controlgroup" data-type="horizontal">
+
+						<input type="radio" name="checkbox-h-2a" id="checkbox-h-2a" value="DC" checked="checked">
+						<label for="checkbox-h-2a">DC</label>
+						<input type="radio" name="checkbox-h-2b" id="checkbox-h-2b" value="DB">
+						<label for="checkbox-h-2b">DB</label>
+						<input type="radio" name="checkbox-h-2c" id="checkbox-h-2c" value="DS">
+						<label for="checkbox-h-2c">DS</label>
+					</fieldset>
+
+
+
+                            <!--button tabindex="-1" id="clean" data-theme="b" type="button" href="" data-mini="false" data-inline="true" >Borrar</button-->
+
 
 
                 </div>
-                <div class="ui-block-b" style="width:10%;">
+                <div class="ui-block-b" style="width:30%;">
 
-                        <label for="textinput1">
-                            Cantidad registros
+                    <div data-role="fieldcontain">
+                        <label class="labelpractica">
+                            Código practica
                         </label>
-                        <input align="left" type="text" name="cantidadReg" id="cantidadReg" data-mini="false" data-inline="true" value="" style="width: 100px;"	 data-theme="a"/>
+                        <fieldset data-role="controlgroup" data-mini="true">
+
+                            <select name="practicas" id="practicas"class="selectPractica" >
+                                <option value="n/c">SELECT</option>
+                                <?php echo $option_practicas; ?>
+                            </select>
+                        </fieldset>
+                    </div>
 
                 </div>
-                <div class="ui-block-c" style="margin-left:3%;  width:20%;">
-					<button tabindex="-1" id="createLine" data-theme="b" type="button" href="home.html" data-mini="false" data-inline="true" >Crear Lineas</button>
-                </div>
-                <div class="ui-block-d" style="width:40%;">
+                <div class="ui-block-c" style="width:30%;">
 
+					<button tabindex="-1" class="createLine" id="l1" data-theme="b" type="button" href="home.html" data-mini="false" data-inline="true" >1 Linea</button>
+                    <button tabindex="-1" class="createLine" id="l2" data-theme="b" type="button" href="home.html" data-mini="false" data-inline="true" >2 Lineas</button>
+                    <button tabindex="-1" class="createLine" id="l3" data-theme="b" type="button" href="home.html" data-mini="false" data-inline="true" >3 Lineas</button>
+                </div>
+                <div class="ui-block-d" style="width:10%;">
+                    <button tabindex="-1" id="save" data-theme="b" type="button" href="" data-mini="false" data-inline="true" >Guardar</button>
                 </div>
             </div>
         </div>
@@ -400,128 +490,50 @@ $(window).load(function() {
              <button id="clean" data-theme="b" type="button" href="home.html" data-mini="false" data-inline="true" >Borrar</button>
              <button id="save" data-theme="b" type="button" href="home.html" data-mini="false" data-inline="true" >Guardar</button>
         </div-->
-		<div class="ui-grid-c ui-responsive">
-			<div class="ui-block-a" style="width: 20%;">
-				<div data-role="fieldcontain">
-					<fieldset data-role="controlgroup" data-mini="true" >
-						<label for="textinput1"  >
-							Tipo de archivo
-						</label>
-						<select name="tipo_archivo" id="tipo_archivo" >
-							<option value="n/c">select</option>
-							<? echo $option_tipo_archivo; ?>
-						</select>
-					</fieldset>
-				</div>
 
-				<div data-role="fieldcontain" >
-					<fieldset data-role="controlgroup" data-mini="true">
-						<label for="textinput1">
-							Número de Comprobante
-						</label>
-						<select name="numero_comprobante">
-							<option value="n/c"><? echo $lang_seleccionar ?></option>
-							<? echo $option_prefijos; ?>
-						</select>
-					</fieldset>
-				</div>
-			</div>
-			<div class="ui-block-b" style="width: 50%">
-				<div style="padding-top: 4%">
-					<fieldset data-role="controlgroup" data-mini="true">
-						<label for="textinput1">
-							Código de ObraSocial
-						</label>
-						<select data-role="none"  name="obras_sociales" id="obras_sociales" class="selectObras" >
-							<option value="n/c">SELECT</option>
-							<? echo $option_obras_sociales; ?>
-						</select>
-					</fieldset>
-				</div>
-
-				<div data-role="fieldcontain">
-					<fieldset data-role="controlgroup" data-mini="true">
-						<label for="textinput1">
-							Código de Practica
-						</label>
-						<select name="practicas" id="practicas"class="selectPractica" >
-							<option value="n/c">SELECT</option>
-							<? echo $option_practicas; ?>
-						</select>
-					</fieldset>
-				</div>
-			</div>
-			<div class="ui-block-c" style="width: 20%">
-				<div data-role="fieldcontain">
-					<fieldset data-role="controlgroup" data-mini="true">
-						<label for="textinput1">
-							CUIL
-						</label>
-						<select name="prefijo">
-							<option value="n/c"><? echo $lang_seleccionar ?></option>
-							<? echo $option_prefijos; ?>
-						</select>
-					</fieldset>
-				</div>
-
-				<div data-role="fieldcontain">
-					<fieldset data-role="controlgroup" data-mini="true">
-						<label for="textinput1">
-							Provincia
-						</label>
-						<select name="provincia" id="provincia">
-							<option value="n/c">select</option>
-							<? echo $option_provincias; ?>
-						</select>
-					</fieldset>
-				</div>
-			</div>
-			<div class="ui-block-d" style="width: 10%">
-                <div style="padding-top: 10%">
-                    <fieldset data-role="controlgroup" data-mini="true">
-                        <label for="textinput1">
-                            Dependencia
-                        </label>
-                        <select data-role="none" name="dependencia" id="dependencia">
-                            <option value="n/c">select</option>
-                            <? echo $option_dependencias; ?>
-                        </select>
-                    </fieldset>
-                </div>
-
-			</div>
-		</div>
     <form name="myForm" id="registros" action="" method="post" enctype="multipart/form-data">
-			<table id="idtable" class="tablesorter" style="width: 100%; float: left;">
+
+<!--
+ <th>First Name<a href="#" onClick="showDiv(2);"><img src="https://cdn0.iconfinder.com/data/icons/ie_Bright/512/plus_add_green.png" style="float:right;width:20px;" /></a></th>
+ -->
+
+
+			<table id="table" class="tablesorter" style="width: 100%; float: left;">
 				<thead>
 						<tr>
-						 
+                          <th></th>
 						  <th>Tipo</th>
-						  <th>Cod.Obra</th>
-						  <th>CUIL</th>
-						  <th>Cod.cert</th>
-						  <th>Venc.cert</th>
-						  <th>Per.prest</th>
-						  <th>cuit.prest</th>
-						  <th>T.comprob</th>
-						  <th>T.emicion</th>
-						  <th>F.emicion</th>
-						  <th>Num.CAE</th>
-							<th>PuntoVenta</th>
-							<th>Num.Comp</th>
-							<th>ImportComp</th>
-							<th>ImportSolic</th>
-							<th>CodigoPrac</th>
-							<th>Cantid</th>
-							<th>Provincia</th>
-							<th>Depend</th>
+						  <th>Cod.Obra<a href="#" onClick="copyFirstCell(2);"><img src="css/images/plus_add_green.png" style="float:right;width:12px;"/></a></th>
+						  <th>CUIL<a href="#" onClick="copyFirstCell(3);"><img src="css/images/plus_add_green.png" style="float:right;width:12px;"/></a></th>
+						  <th>Cod.cert<a href="#" onClick="copyFirstCell(4);"><img src="css/images/plus_add_green.png" style="float:right;width:10px;"/></a></th>
+						  <th>Venc.cert<a href="#" onClick="copyFirstCell(5);"><img src="css/images/plus_add_green.png" style="float:right;width:10px;"/></a></th>
+						  <th>Per.prest<a href="#" onClick="copyFirstCell(6);"><img src="css/images/plus_add_green.png" style="float:right;width:10px;"/></a></th>
+						  <th>cuit.prest<a href="#" onClick="copyFirstCell(7);"><img src="css/images/plus_add_green.png" style="float:right;width:10px;"/></a></th>
+						  <th>T.comprob<a href="#" onClick="copyFirstCell(8);"><img src="css/images/plus_add_green.png" style="float:right;width:10px;"/></a></th>
+						  <th>T.emicion<a href="#" onClick="copyFirstCell(9);"><img src="css/images/plus_add_green.png" style="float:right;width:10px;"/></a></th>
+						  <th>F.emicion<a href="#" onClick="copyFirstCell(10);"><img src="css/images/plus_add_green.png" style="float:right;width:10px;"/></a></th>
+						  <th>Num.CAE<a href="#" onClick="copyFirstCell(11);"><img src="css/images/plus_add_green.png" style="float:right;width:10px;"/></a></th>
+							<th>PuntoVenta<a href="#" onClick="copyFirstCell(12);"><img src="css/images/plus_add_green.png" style="float:right;width:10px;"/></a></th>
+							<th>Num.Comp<a href="#" onClick="copyFirstCell(13);"><img src="css/images/plus_add_green.png" style="float:right;width:10px;"/></a></th>
+							<th>ImportComp<a href="#" onClick="copyFirstCell(14);"><img src="css/images/plus_add_green.png" style="float:right;width:10px;"/></a></th>
+							<th>ImportSolic<a href="#" onClick="copyFirstCell(15);"><img src="css/images/plus_add_green.png" style="float:right;width:10px;"/></a></th>
+							<th>CodigoPrac<a href="#" onClick="copyFirstCell(16);"><img src="css/images/plus_add_green.png" style="float:right;width:10px;"/></a></th>
+							<th>Cantid<a href="#" onClick="copyFirstCell(17);"><img src="css/images/plus_add_green.png" style="float:right;width:10px;"/></a></th>
+							<th>Provincia<a href="#" onClick="copyFirstCell(18);"><img src="css/images/plus_add_green.png" style="float:right;width:10px;"/></a></th>
+
 						 
 						  
 						</tr>
 		    </thead>
+                <tbody>
+                <?php echo $listado; ?>
+
+                </tbody>
+
+
 			<tfoot>
 						<tr>
-
+							<th></th>
 							<th>Tipo</th>
 							<th>Cod.Obra</th>
 							<th>CUIL</th>
@@ -540,7 +552,7 @@ $(window).load(function() {
 							<th>CodigoPrac</th>
 							<th>Cantid</th>
 							<th>Provincia</th>
-							<th>Depend</th>
+
 						</tr>
 
 			<td colspan="19">
@@ -565,9 +577,7 @@ $(window).load(function() {
 			</td>
 
 		</tfoot>
-	   <tbody>
-	      <? echo $listado; ?>
-	   </tbody>
+
 	  </table>
 	</form>
 
@@ -575,4 +585,11 @@ $(window).load(function() {
             </div>
         </div>
     </body>
+
+<script>
+
+
+
+
+</script>
 </html>

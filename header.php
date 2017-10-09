@@ -1,4 +1,5 @@
-<?
+<?php
+ob_start();
 session_start();
 $timeout = 60*60; // Number of seconds until it times out.
 
@@ -16,15 +17,13 @@ if(isset($_SESSION['timeout'])) {
 // Update the timout field with the current time.
 $_SESSION['timeout'] = time();
 
-include ("conexion.php");
-$user = $_SESSION['usuario'] ;
 
 echo "
 <div data-theme=\"a\" data-role=\"header\" data-position=\"fixed\" >
  <a style='margin-left:  20px;' data-role=\"button\" data-rel=\"back\" data-iconpos=\"notext\" data-icon=\"back\" data-theme=\"a\" data-inline=\"true\" class=\"ui-btn-left\">Back</a>
-	 <p>
-				$user
-				<a href=\"logout.php\">logout</a>
+	 <p>".$_SESSION['usuario'].
+
+				"<a href=\"logout.php\">logout</a>
                 </p>
 
 </div>
@@ -40,8 +39,6 @@ echo "
 </div><!-- /panel -->
 
 </div>
-
-
 ";
 
 

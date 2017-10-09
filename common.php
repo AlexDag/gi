@@ -2,7 +2,7 @@
 
 
 
-/***********************************************************************************************************
+    /***********************************************************************************************************
 **	string function add_options(array anArray, [int valueToBeSelected]):
 **		The first argument is an array to make with them the options and the second argument is optional is a
 **  value that gonna be selected in the option. Return the options for a select (combo), with the key of the 
@@ -11,7 +11,7 @@
 function add_options()
 {
     $theArray = func_get_arg(0);
-
+    $options="";
 
     if(func_num_args() > 1)
     {
@@ -55,8 +55,8 @@ function get_tipo_archivo($pdo)
     $pdo->commit();
     $ret='';
     while($row = $query->fetch()) {
-        $id =  ( $row[tipo] );
-        $ret[$id] = ( $row[valor]);
+        $id =  ( $row['tipo'] );
+        $ret[$id] = ( $row['valor']);
     }
     return $ret;
 }
@@ -70,8 +70,8 @@ function get_provincias($pdo)
     $pdo->commit();
     $ret='';
     while($row = $query->fetch()) {
-        $id =  ( $row[code] );
-        $ret[$id] = ( $row[name]);
+        $id =  ( $row['code'] );
+        $ret[$id] = ( $row['name']);
     }
     return $ret;
 }
@@ -85,8 +85,8 @@ function get_obras_sociales($pdo)
     $pdo->commit();
     $ret='';
     while($row = $query->fetch()) {
-        $id =  ( $row[codigo] );
-        $ret[$id] = ( $row[valor]);
+        $id =  ( $row['codigo'] );
+        $ret[$id] = ( $row['valor']);
     }
     return $ret;
 }
@@ -100,8 +100,8 @@ function get_practicas($pdo)
     $pdo->commit();
     $ret='';
     while($row = $query->fetch()) {
-        $id =  ( $row[codigo] );
-        $ret[$id] = ( $row[practica]);
+        $id =  ( $row['codigo'] );
+        $ret[$id] = ( $row['practica']);
     }
     return $ret;
 }
@@ -116,8 +116,8 @@ $sql = "SELECT codigo,valor FROM dependencias ORDER BY valor ASC";
     $pdo->commit();
     $ret='';
     while($row = $query->fetch()) {
-        $id =  ( $row[codigo] );
-        $ret[$id] = ( $row[valor]);
+        $id =  ( $row['codigo'] );
+        $ret[$id] = ( $row['valor']);
     }
     return $ret;
 }
@@ -133,7 +133,7 @@ function is_user($pdo,$username)
     while($row = $query->fetch()) {
 
 
-        return $username== $row[username];
+        return $username== $row['username'];
     }
     return false;
 }
@@ -153,6 +153,27 @@ function get_user2($pdo,$username)
     }
     return false;
 }
+
+function get_dependencia($pdo,$code_practica)
+{
+
+
+    $query = $pdo->prepare("SELECT  codigo  from practicas  WHERE  codigo = ? and dependencia = 1");
+
+    $query->execute(array($code_practica));
+
+
+    while($row = $query->fetch()) {
+
+       if ( $code_practica ==  $row['codigo'] ){
+            return 'S';
+        }
+    }
+    return 'N';
+}
+
+
+
 function in_array_r($needle, $haystack) {
     foreach ($haystack as $key => $value){
 

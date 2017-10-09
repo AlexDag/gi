@@ -11,10 +11,10 @@ $user = $_SESSION['usuario'];
 if( (is_user($pdo, $user)) && (isset($_POST['datos']))  ) {
     $registr_unico = $_POST['datos'];
 
-    $sql = "SELECT tipo_archivo, obras_socilales, cuil, codigo_certificado ,  DATE_FORMAT( vencim_certificado, '%d-%m-%Y' ) as vencim_certificado ".
-           ", periodo_prestacion, cuit_prestador , tipo_comprobante , tipo_emision, DATE_FORMAT( fecha_emision, '%d-%m-%Y' ) as fecha_emision ".
+    $sql = "SELECT tipo_archivo, obras_socilales, cuil, codigo_certificado ,  DATE_FORMAT( vencim_certificado, '%d/%m/%Y' ) as vencim_certificado ".
+           ", periodo_prestacion, cuit_prestador , tipo_comprobante , tipo_emision, DATE_FORMAT( fecha_emision, '%d/%m/%Y' ) as fecha_emision ".
            ", nro_cae, punto_venta, nro_comprobante ,importe_comprobante , 	importe_solicitado  ".
-           ", codigo_practica, cantidad, provincia, dependencia FROM registros_descapacitados WHERE registro_unico = ?  AND user = ? ";
+           ", codigo_practica, cantidad, provincia, dependencia FROM registros_descapacitados WHERE registro_unico = ?  AND user = ?";
 
     $smt = $pdo->prepare($sql);
 
