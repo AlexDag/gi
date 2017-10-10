@@ -259,6 +259,13 @@ $(window).load(function() {
 
                 var practicas = $('#practicas option:selected').val();
 
+                var importe_comprobante = (practicas === '097' || practicas === '098' || practicas === '099') ? '0'.repeat(10):'';
+                var importe_solicitado =  importe_comprobante ;
+                var tipo_comprobante = (practicas === '097' || practicas === '098' || practicas === '099') ? '0'.repeat(2):'';
+                var nro_cae = (practicas === '097' || practicas === '098' || practicas === '099') ? '0'.repeat(14):'';
+                var punto_de_venta = (practicas === '097' || practicas === '098' || practicas === '099') ? '0'.repeat(4):'';
+                var nro_comprobante = (practicas === '097' || practicas === '098' || practicas === '099') ? '0'.repeat(8):'';
+                var tipo_emision = (practicas === '097' || practicas === '098' || practicas === '099') ? 'N':'';
 
                 var row='';
 				for(var i=0;i<countInt;i++){
@@ -273,14 +280,14 @@ $(window).load(function() {
                             '<td t="C" ></td>'+/*vencimiento certificado*/
                             '<td t="C" ></td>'+/*periodo prestacion*/
 							'<td t="C" ></td>'+/*CUIT prestador*/
-                            '<td t="C" ></td>'+/*tipo de comprobante*/
-                            '<td t="C" ></td>'+/*tipo emision*/
+                            '<td t="C" >'+tipo_comprobante+'</td>'+/*tipo de comprobante*/
+                            '<td t="C" >'+tipo_emision+'</td>'+/*tipo emision*/
                             '<td t="C" ></td>'+/*fecha de emision */
-                            '<td t="C" ></td>'+/*numero CAE o CAI*/
-                            '<td t="C" ></td>'+/*punto de venta*/
-							'<td t="C" ></td>'+ /*numero comprobante*/
-                            '<td t="C" ></td>'+/*importe de comprobante*/
-                            '<td t="C" ></td>'+/*importe solicitado*/
+                            '<td t="C" >'+nro_cae+'</td>'+/*numero CAE o CAI*/
+                            '<td t="C" >'+punto_de_venta+'</td>'+/*punto de venta*/
+							'<td t="C" >'+nro_comprobante+'</td>'+ /*numero comprobante*/
+                            '<td t="C" >'+importe_comprobante+'</td>'+/*importe de comprobante*/
+                            '<td t="C" >'+importe_solicitado+'</td>'+/*importe solicitado*/
                             '<td t="C" >'+practicas+'</td>'+/*codigo de practica*/
                             '<td t="C" ></td>'+/*cantidad*/
                             '<td t="C" ></td>'+/*provincia*/

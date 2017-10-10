@@ -9,8 +9,6 @@ function is_user($pdo,$username)
     $pdo->commit();
 
     while($row = $query->fetch()) {
-
-
         return $username== $row['username'];
     }
     return false;
@@ -21,6 +19,11 @@ function is_user($pdo,$username)
 if(isset($_GET["p"])  ){
 
 
+    define('DB_HOST', 'localhost');
+    define('DB_PORT',3306);
+    define('DB_USER','id3066980_alex23ua');
+    define('DB_PASS','F0st1rR4Cnn');
+    define('DB_NAME','id3066980_gi');
 
 
     $dsn = 'mysql:dbname='.DB_NAME.';host='.DB_HOST.';port='.DB_PORT;
@@ -96,4 +99,3 @@ if(isset($_GET["p"])  ){
     }
 }
 ?>
-

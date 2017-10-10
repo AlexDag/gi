@@ -29,7 +29,7 @@ echo"
                 </div>
 
 
-                <div data-role=\"navbar\" data-iconpos=\"right\">
+                <!--div data-role=\"navbar\" data-iconpos=\"right\">
                     <ul>
                         <li>
                             <a href=\"\" data-transition=\"flow\" data-theme=\"c\" data-icon=\"custom\" id=\"users_icon\" rel=\"external\">
@@ -37,7 +37,7 @@ echo"
                             </a>
                         </li>
                     </ul>
-                </div>
+                </div-->
 
 				<div>
 				</div>

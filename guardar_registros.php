@@ -76,8 +76,6 @@ function getFullDateForDataBase8($fecha){
              $res[4]= str_pad($res[4], 40, ' ', STR_PAD_RIGHT);
              $codigo_certificado = $res[4];
 
-
-
 			 $fecha_vencim_certificado = $res[5];
 			 $periodo_prestacion = $res[6];
 
@@ -97,10 +95,17 @@ function getFullDateForDataBase8($fecha){
              $res[13] = str_pad($res[13], 8, '0', STR_PAD_LEFT);
              $nro_comprobante = $res[13];
 
-			 $importe_cmprobante = $res[14];
-			 $importe_solicitad = $res[15];
+             $res[14] =str_pad($res[14], 10, '0', STR_PAD_LEFT);
+             $importe_cmprobante = $res[14];
+
+             $res[15] =str_pad($res[15], 10, '0', STR_PAD_LEFT);
+             $importe_solicitad = $res[15];
 			 $codigo_ptractica = $res[16];
+
+
+             $res[17] =str_pad($res[17], 6, '0', STR_PAD_LEFT);
 			 $cantidad = $res[17];
+
 			 $provincia = $res[18];
 			 $registo_unico = $res[19];
 
