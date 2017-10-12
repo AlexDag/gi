@@ -25,11 +25,16 @@
     <body id="login">
 
         <div data-role="page" id="page1">
-
+			<?php
+				$message = '';
+				if( isset( $_GET["m"] ) ) {
+					$message = $_GET["m"];
+			}
+			?>
             <div data-role="content">
 
                 <h1 class="textcenter">Bienvenido a Gestión Integración</h1>
-
+				<h4 class="textcenter1"><?php echo $message;?></h4>
                 <div class="login">
 					<form action="administrador.php" method="post" encType="multipart/form-data">
 						<div data-role="fieldcontain">
@@ -44,7 +49,7 @@
 								<input name="clave" id="textinput2" type="password" />
 							</fieldset>
 						</div>
-						<input data-theme="b" value="Submit" data-mini="true" type="submit" class="ui-custom-btn"/>
+						<input data-theme="b" value="Logearse" data-mini="true" type="submit" class="ui-custom-btn"/>
 					</form>
 				</div>
             </div>

@@ -1,8 +1,8 @@
-﻿<?php session_start();
+<?php
+session_start();
+ob_start();
 include ("conexion.php");
 include("common.php");
-//error_reporting( error_reporting() & ~E_NOTICE );
-
 
 $option_tipo_archivo	= add_options(get_tipo_archivo($pdo));
 $option_provincias	= add_options(get_provincias($pdo));
@@ -11,7 +11,6 @@ $option_dependencias	= add_options(get_dependencias($pdo));
 $option_practicas	= add_options(get_practicas($pdo));
 
 $listado="";
-
 ?>
 <!DOCTYPE html>
 <html>
@@ -594,9 +593,5 @@ $(window).load(function() {
     </body>
 
 <script>
-
-
-
-
 </script>
 </html>

@@ -4,7 +4,6 @@ include_once ("conexion.php");
 require ("lib/password.php");
 include_once("common.php");
 ?>
-
 <!DOCTYPE html>
 <html>
     <head>
@@ -66,26 +65,6 @@ include_once("common.php");
 
                       include "header.php";
                      include "menu_principal.php";
-/*
-                         $obrasarr = array();
-                         $registers ='1|1|1|1|1';
-                         $registers2 ='2|2|2|1|1';
-                         $ffile = '001';
-                         $ffile2 = '002';
-
-
-                             $obrasarr[$ffile]=  $registers;
-                         $obrasarr[$ffile2]=  $registers2;
-
-
-                         foreach ($obrasarr as $key => $value) {
-                             // save to file
-
-                             echo '' .$key.'  '. $obrasarr[$key].'    '.'\n'.'.....';
-                         }
-*/
-
-
                      }
                         else{
 
@@ -102,7 +81,6 @@ include_once("common.php");
                      header('Location: index.php111?nocache='.time(), true, 302);
                      exit();
                      */
-                 }?>
-        </div>
+                 }?></div>
     </body>
 </html>

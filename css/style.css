@@ -1157,6 +1157,14 @@ p.nombre_producto {
     padding: 10px;
     text-align: center;
 }
+.textcenter1 {
+    margin: auto;
+    width: 50%;
+    border: 0px solid gray;
+    padding: 10px;
+    text-align: center;
+    color: red;
+}
 .center {
     margin: auto;
     width: 50%;
