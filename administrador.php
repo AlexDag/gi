@@ -3,6 +3,16 @@ ob_start();
 include_once ("conexion.php");
 require ("lib/password.php");
 include_once("common.php");
+
+
+$dir = 'myDir';
+
+// create new directory with 744 permissions if it does not exist yet
+// owner will be the user/group the PHP script is run under
+
+
+//file_put_contents("./test/postLOg.log",print_r('test',true));
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -30,10 +40,6 @@ include_once("common.php");
         <!-- Home -->
         <div data-role="page" id="page1">
                  <?php
-                 if( isset( $_SESSION['usuario'] ) ){
-                     echo 'user:'.$_SESSION['usuario'];
-                 }else
-                     echo 'not user:';
 
                  if( !isset( $_SESSION['usuario'] ) ){
 
@@ -63,8 +69,10 @@ include_once("common.php");
 
                          $_SESSION['usuario'] = $usuario;
 
-                      include "header.php";
+                     include "header.php";
                      include "menu_principal.php";
+
+
                      }
                         else{
 
@@ -74,13 +82,10 @@ include_once("common.php");
                             exit;
                         }
                  }else{
-
+                    //echo 'user:'. $_SESSION['usuario'];
                      include "header.php";
                      include "menu_principal.php";
-                     /*
-                     header('Location: index.php111?nocache='.time(), true, 302);
-                     exit();
-                     */
+                     
                  }?></div>
     </body>
 </html>
